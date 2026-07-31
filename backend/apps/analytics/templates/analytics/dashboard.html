@@ -1,0 +1,167 @@
+{% extends "base/base.html" %}
+
+{% block title %}
+Analytics
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h2 class="mb-4">
+
+        Analytics Dashboard
+
+    </h2>
+
+    <div class="row">
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Village</h6>
+
+                    <h2>{{ total_village }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Survey</h6>
+
+                    <h2>{{ total_survey }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Respondent</h6>
+
+                    <h2>{{ total_respondent }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Response</h6>
+
+                    <h2>{{ total_response }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                Average Score by Village
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th width="10%">No</th>
+
+                        <th>Village</th>
+
+                        <th width="25%">Average Score</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in village_scores %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ forloop.counter }}
+
+                        </td>
+
+                        <td>
+
+                            {{ item.village.name }}
+
+                        </td>
+
+                        <td>
+
+                            {{ item.score|floatformat:2 }}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="3" class="text-center">
+
+                            No Data Available
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

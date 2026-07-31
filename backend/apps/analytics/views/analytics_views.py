@@ -1,0 +1,284 @@
+from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+
+from apps.analytics.services import AnalyticsService
+
+from apps.master.models import Village
+from apps.survey.models import Survey
+from apps.respondent.models import Respondent
+from apps.response.models import Response
+
+
+def analytics_dashboard(request):
+
+    context = {
+
+        "total_village": Village.objects.count(),
+
+        "total_survey": Survey.objects.count(),
+
+        "total_respondent": Respondent.objects.count(),
+
+        "total_response": Response.objects.count(),
+
+        "average_score": AnalyticsService.average_score(),
+
+        "village_scores": AnalyticsService.village_scores(),
+
+        "likert_distribution": AnalyticsService.likert_distribution(),
+
+        "indicator_scores": AnalyticsService.indicator_scores(),
+
+    }
+
+    return render(
+
+        request,
+
+        "analytics/dashboard.html",
+
+        context,
+
+    )
+
+
+# =============================================================
+# ML DASHBOARD (clustering, feature importance, TOPSIS,
+# radar chart, export) -- terpisah dari dashboard lama di atas.
+# =============================================================
+
+def ml_dashboard(request):
+
+    from apps.analytics.services.cluster_recommendation_service import (
+        ClusterRecommendationService,
+    )
+    from apps.analytics.services.feature_importance_service import (
+        FeatureImportanceService,
+    )
+    from apps.analytics.services.ml_dashboard_service import (
+        MLDashboardService,
+    )
+
+    village_table = MLDashboardService.village_table()
+
+    variable_importance = (
+        FeatureImportanceService.dominant_variables()
+    )
+
+    context = {
+
+        "summary": MLDashboardService.summary(),
+
+        "cluster_distribution": (
+            MLDashboardService.cluster_distribution()
+        ),
+
+        "scatter_data": MLDashboardService.scatter_data(),
+
+        "village_table": village_table,
+
+        "villages": Village.objects.all().order_by("name"),
+
+        "variable_importance": variable_importance,
+
+        "dominant_indicators": (
+            FeatureImportanceService.dominant_indicators()
+        ),
+
+        "cluster_ranking": (
+            ClusterRecommendationService.rank_within_clusters()
+        ),
+
+        "narrative": MLDashboardService.narrative_summary(
+            variable_importance,
+        ),
+
+    }
+
+    return render(
+
+        request,
+
+        "analytics/ml_dashboard.html",
+
+        context,
+
+    )
+
+
+def retrain_model(request):
+
+    from apps.analytics.services.clustering_service import (
+        ClusteringService,
+    )
+
+    if request.method == "POST":
+
+        result = ClusteringService.train_and_save()
+
+        if result["success"]:
+
+            messages.success(
+                request,
+                (
+                    "Model berhasil di-training ulang atas "
+                    f"{result['n_villages']} desa."
+                ),
+            )
+
+        else:
+
+            messages.error(
+                request,
+                result["message"],
+            )
+
+    return redirect("analytics:ml-dashboard")
+
+
+def predict_village(request, village_id):
+
+    from apps.analytics.services.clustering_service import (
+        ClusteringService,
+    )
+
+    village = get_object_or_404(Village, pk=village_id)
+
+    if request.method == "POST":
+
+        result = ClusteringService.predict_village(village)
+
+        if result["success"]:
+
+            messages.success(
+                request,
+                (
+                    f"Desa \"{village.name}\" diprediksi masuk "
+                    f"cluster \"{result['cluster']['name']}\"."
+                ),
+            )
+
+        else:
+
+            messages.error(
+                request,
+                result["message"],
+            )
+
+    return redirect("analytics:ml-dashboard")
+
+
+def village_radar_json(request, village_id):
+
+    from apps.analytics.services.feature_importance_service import (
+        FeatureImportanceService,
+    )
+
+    village = get_object_or_404(Village, pk=village_id)
+
+    radar = FeatureImportanceService.radar_axes_for_village(
+        village,
+    )
+
+    return JsonResponse({
+
+        "village": village.name,
+
+        "labels": [axis["code"] for axis in radar],
+
+        "values": [axis["score"] for axis in radar],
+
+    })
+
+
+def simulate_cluster(request):
+
+    from apps.master.models import Variable
+
+    from apps.analytics.services.clustering_service import (
+        ClusteringService,
+    )
+
+    variables = (
+        Variable.objects
+        .filter(is_active=True)
+        .order_by("code")
+    )
+
+    result = None
+
+    submitted_scores = {}
+
+    if request.method == "POST":
+
+        variable_scores = {}
+
+        for variable in variables:
+
+            raw_value = request.POST.get(
+                f"variable_{variable.code}",
+                3,
+            )
+
+            value = float(raw_value)
+
+            variable_scores[variable.code] = value
+
+            submitted_scores[variable.code] = value
+
+        result = ClusteringService.predict_manual(
+            variable_scores,
+        )
+
+        if not result["success"]:
+
+            messages.error(request, result["message"])
+
+    context = {
+
+        "variables": variables,
+
+        "result": result,
+
+        "submitted_scores": submitted_scores,
+
+    }
+
+    return render(
+
+        request,
+
+        "analytics/simulate.html",
+
+        context,
+
+    )
+
+
+def export_excel(request):
+
+    from apps.analytics.exports.excel_export import (
+        AnalyticsExcelExport,
+    )
+    from apps.analytics.services.export_data_service import (
+        ExportDataService,
+    )
+
+    data = ExportDataService.compile()
+
+    return AnalyticsExcelExport.export(data)
+
+
+def export_pdf(request):
+
+    from apps.analytics.exports.pdf_export import (
+        AnalyticsPDFExport,
+    )
+    from apps.analytics.services.export_data_service import (
+        ExportDataService,
+    )
+
+    data = ExportDataService.compile()
+
+    return AnalyticsPDFExport.export(data)

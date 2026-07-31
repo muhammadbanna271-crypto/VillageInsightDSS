@@ -1,0 +1,248 @@
+<div class="d-flex flex-column bg-dark text-white"
+     style="
+        width:260px;
+        height:100vh;
+        position:fixed;
+        left:0;
+        top:0;
+     ">
+
+    <!-- Header -->
+    <div class="p-3 border-bottom border-secondary">
+
+        <h4 class="text-center m-0">
+
+            VillageInsight DSS
+
+        </h4>
+
+    </div>
+
+    <!-- Menu -->
+    <div class="flex-grow-1 overflow-auto p-3">
+
+        <ul class="nav nav-pills flex-column">
+
+            <!-- ================= Dashboard ================= -->
+
+            <li class="nav-item mb-2">
+
+                <a href="{% url 'dashboard:dashboard' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-speedometer2 me-2"></i>
+
+                    Dashboard
+
+                </a>
+
+            </li>
+
+            <!-- ================= Master Data ================= -->
+
+            <li class="mt-3 mb-2 text-secondary">
+
+                MASTER DATA
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'master:district-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-map me-2"></i>
+
+                    District
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'master:village-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-geo-alt me-2"></i>
+
+                    Village
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'master:cluster-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-diagram-3 me-2"></i>
+
+                    Cluster
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'master:variable-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-boxes me-2"></i>
+
+                    Variable
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'master:indicator-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-bar-chart-line me-2"></i>
+
+                    Indicator
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'master:questionnaire-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-ui-checks-grid me-2"></i>
+
+                    Questionnaire
+
+                </a>
+
+            </li>
+
+            <!-- ================= Survey ================= -->
+
+            <li class="mt-3 mb-2 text-secondary">
+
+                SURVEY
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'survey:survey-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-clipboard-data me-2"></i>
+
+                    Survey
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'survey:survey-village-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-pin-map me-2"></i>
+
+                    Survey Village
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'respondent:respondent-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-people me-2"></i>
+
+                    Respondent
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'response:response-list' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-clipboard-check me-2"></i>
+
+                    Response
+
+                </a>
+
+            </li>
+
+            <!-- ================= Analytics ================= -->
+
+            <li class="mt-3 mb-2 text-secondary">
+
+                ANALYTICS
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'analytics:dashboard' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-graph-up-arrow me-2"></i>
+
+                    Analytics
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="{% url 'recommendation:dashboard' %}"
+                   class="nav-link text-white">
+
+                    <i class="bi bi-trophy me-2"></i>
+
+                    Recommendation
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </div>
+
+    <!-- Logout -->
+
+    <div class="p-3 border-top border-secondary">
+
+        <form method="post"
+              action="{% url 'logout' %}">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-danger w-100">
+
+                <i class="bi bi-box-arrow-right me-2"></i>
+
+                Logout
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

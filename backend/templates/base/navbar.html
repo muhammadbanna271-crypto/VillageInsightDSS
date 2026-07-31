@@ -1,0 +1,156 @@
+<div class="topbar">
+
+    <div class="row align-items-center">
+
+        <!-- Left -->
+
+        <div class="col-md-6 d-flex align-items-center">
+
+            <button
+                class="btn btn-outline-secondary me-3"
+                onclick="toggleSidebar()">
+
+                <i class="bi bi-list"></i>
+
+            </button>
+
+            <div>
+
+                <h4 class="mb-0">
+
+                    {% block page_title %}
+
+                    Dashboard
+
+                    {% endblock %}
+
+                </h4>
+
+                <small class="text-muted">
+
+                    VillageInsight Decision Support System
+
+                </small>
+
+            </div>
+
+        </div>
+
+        <!-- Right -->
+
+        <div class="col-md-6">
+
+            <div class="d-flex justify-content-end align-items-center">
+
+                <!-- Clock -->
+
+                <div class="me-4 text-end">
+
+                    <small class="text-muted">
+
+                        Today
+
+                    </small>
+
+                    <br>
+
+                    <strong id="clock">
+
+                    </strong>
+
+                </div>
+
+                <!-- User -->
+
+                <div class="dropdown">
+
+                    <button
+
+                        class="btn btn-light dropdown-toggle"
+
+                        data-bs-toggle="dropdown">
+
+                        <i class="bi bi-person-circle"></i>
+
+                        {{ request.user.username }}
+
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="/admin/">
+
+                                <i class="bi bi-person"></i>
+
+                                Profile
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="/admin/password_change/">
+
+                                <i class="bi bi-key"></i>
+
+                                Change Password
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <hr class="dropdown-divider">
+
+                        </li>
+
+                        <li>
+
+                            <a
+                                class="dropdown-item text-danger"
+                                href="{% url 'logout' %}">
+
+                                <i class="bi bi-box-arrow-right"></i>
+
+                                Logout
+
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function updateClock(){
+
+    const now = new Date();
+
+    document.getElementById("clock").innerHTML =
+        now.toLocaleString();
+
+}
+
+updateClock();
+
+setInterval(updateClock,1000);
+
+</script>

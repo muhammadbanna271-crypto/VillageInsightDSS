@@ -1,0 +1,164 @@
+{% extends "base/crud_page.html" %}
+
+{% block title %}
+Variable List
+{% endblock %}
+
+{% block page_title %}
+Variable List
+{% endblock %}
+
+{% block page_action %}
+
+<a
+    href="{% url 'master:variable-create' %}"
+    class="btn btn-primary">
+
+    <i class="bi bi-plus-circle"></i>
+
+    Add Variable
+
+</a>
+
+{% endblock %}
+
+{% block search %}
+
+<form method="get" class="row mb-3">
+
+    <div class="col-md-4">
+
+        <input
+            type="search"
+            name="q"
+            value="{{ request.GET.q }}"
+            class="form-control"
+            placeholder="Search variable...">
+
+    </div>
+
+    <div class="col-auto">
+
+        <button
+            type="submit"
+            class="btn btn-primary">
+
+            <i class="bi bi-search"></i>
+
+            Search
+
+        </button>
+
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block crud_content %}
+
+<table class="table table-hover table-bordered">
+
+    <thead class="table-light">
+
+        <tr>
+
+            <th width="60">No</th>
+            <th width="120">Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th width="100">Weight</th>
+            <th width="100">Status</th>
+            <th width="220">Action</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for variable in variables %}
+
+        <tr>
+
+            <td>{{ forloop.counter }}</td>
+
+            <td>{{ variable.code }}</td>
+
+            <td>{{ variable.name }}</td>
+
+            <td>{{ variable.description|default:"-" }}</td>
+
+            <td>{{ variable.weight }}</td>
+
+            <td>
+
+                {% if variable.is_active %}
+
+                    <span class="badge bg-success">
+
+                        Active
+
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-danger">
+
+                        Inactive
+
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                <a
+                    href="{% url 'master:variable-detail' variable.pk %}"
+                    class="btn btn-info btn-sm">
+
+                    Detail
+
+                </a>
+
+                <a
+                    href="{% url 'master:variable-update' variable.pk %}"
+                    class="btn btn-warning btn-sm">
+
+                    Edit
+
+                </a>
+
+                <a
+                    href="{% url 'master:variable-delete' variable.pk %}"
+                    class="btn btn-danger btn-sm">
+
+                    Delete
+
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="7" class="text-center">
+
+                No Variable Available
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}
