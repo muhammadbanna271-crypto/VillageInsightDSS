@@ -1,8 +1,8 @@
 # 🏛️ VillageInsight DSS
 
-> **Adaptive Decision Support System for Tourism Village Development using Path Analysis, PCA, and Cluster Analysis**
+> **Adaptive Decision Support System for Tourism Village Development using K-Means Clustering, Feature Importance Analysis, and TOPSIS**
 
-![Version](https://img.shields.io/badge/version-v0.1.0-blue)
+![Version](https://img.shields.io/badge/version-v0.9.0-blue)
 ![Python](https://img.shields.io/badge/Python-3.12+-green)
 ![Django](https://img.shields.io/badge/Django-5.x-success)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
@@ -14,11 +14,12 @@
 
 VillageInsight DSS (Decision Support System) is a web-based information system developed to support evidence-based decision making for tourism village development.
 
-The system integrates statistical research and information technology by combining:
+The system integrates data engineering and machine learning by combining:
 
-- Path Analysis
-- Principal Component Analysis (PCA)
-- Cluster Analysis
+- K-Means Clustering (village segmentation)
+- Random Forest Feature Importance (what drives cluster differences)
+- TOPSIS (priority ranking within each cluster)
+- PCA (2D visualization only, not a core analysis method)
 - Interactive Dashboard
 - Recommendation Engine
 - Decision Support System (DSS)
@@ -47,11 +48,14 @@ The system aims to:
 VillageInsightDSS/
 
 ├── backend/
-├── datasets/
-├── deployment/
-├── docs/
-├── scripts/
-└── tests/
+│   ├── apps/          # master, survey, respondent, response,
+│   │                   # analytics, dashboard, recommendation
+│   ├── common/         # shared base view/model/form classes
+│   ├── config/         # Django settings, urls, wsgi/asgi
+│   ├── static/         # css, js
+│   └── templates/      # shared templates
+├── requirements.txt
+└── (deployment/, docs/, scripts/, tests/ -- planned, not yet created)
 ```
 
 ---
@@ -69,8 +73,8 @@ VillageInsightDSS/
 - HTML5
 - Bootstrap 5
 - JavaScript
-- Plotly
-- Leaflet
+- Chart.js
+- GIS map: planned, not yet implemented (see Future Development)
 
 ## Machine Learning
 
@@ -89,16 +93,23 @@ VillageInsightDSS/
 
 # 📊 Research Methodology
 
-The system is built based on statistical research consisting of:
+The system is built based on a machine learning pipeline consisting of:
 
-- Path Analysis
-- Principal Component Analysis (PCA)
-- Cluster Analysis
+- K-Means Clustering (village segmentation)
+- Random Forest (feature importance across clusters)
+- TOPSIS (priority ranking within cluster)
+- PCA (visualization only, not a core analysis method)
 
 Research data:
 
 - 24 Tourism Villages
 - 1,152 Respondents
+- 5 Predictor Variables (X1-X5): Orientasi Pasar, Fasilitas Pariwisata,
+  Infrastruktur dan Aksesibilitas, Hubungan Pemasaran, Kualitas Layanan
+- 3 Mediator Variables (Y1-Y3): Inovasi Ekonomi Kreatif, Kepuasan
+  Pengunjung, Orientasi Kewirausahaan
+- 3 Response Variables (Y4-Y6): Penerimaan Daerah (PAD), Kunjungan
+  Wisata, Keunggulan Bersaing
 - Independent Variables (X1–X5)
 - Mediator Variables (Y1–Y3)
 - Dependent Variables (Y4–Y6)
@@ -130,15 +141,43 @@ Research data:
 backend/
 │
 ├── apps/
+│   ├── master/          # village, district, variable, indicator, questionnaire, cluster
+│   ├── survey/
+│   ├── respondent/
+│   ├── response/        # answers + bulk Excel import + scoring
+│   ├── analytics/        # score aggregation, K-Means, feature importance, ML registry
+│   ├── dashboard/
+│   └── recommendation/   # TOPSIS ranking within cluster
 ├── common/
 ├── config/
-├── core/
-├── machine_learning/
-├── media/
 ├── static/
 ├── templates/
 └── manage.py
 ```
+
+---
+
+# 🔄 Operational Flow (Import → Analysis)
+
+Importing response data does **not** automatically update scores, clusters,
+or recommendations. The actual sequence is:
+
+1. **Seed master data first** (village, variable, indicator, questionnaire,
+   survey) -- see `seed_master_data.py` management command. Required once
+   before any response data can be imported.
+2. **Import response data** via `/response/import/`. This only stores raw
+   answers (`Response`) -- no scores or clusters are computed yet.
+3. **Click "Retrain Model"** on the Analytics/ML dashboard
+   (`/analytics/ml/retrain/`). This single action triggers, in order:
+   score aggregation (indicator → variable → village) **and** K-Means
+   clustering. Both are bundled into this one step.
+4. **Only after step 3** will the Recommendation (TOPSIS) page and the
+   Analytics dashboards have data to show. If Recommendation looks empty
+   right after import, this is why -- retrain hasn't run yet, not a bug.
+
+This coupling (aggregation only runs as a side effect of retraining, not
+on its own) is a known design quirk worth keeping in mind when debugging
+or extending the pipeline.
 
 ---
 

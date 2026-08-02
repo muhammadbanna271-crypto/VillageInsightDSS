@@ -1,0 +1,676 @@
+{
+  "variables": [
+    {
+      "code": "X1",
+      "name": "Orientasi Pasar"
+    },
+    {
+      "code": "X2",
+      "name": "Fasilitas Pariwisata"
+    },
+    {
+      "code": "X3",
+      "name": "Infrastruktur dan Aksesibilitas"
+    },
+    {
+      "code": "X4",
+      "name": "Hubungan Pemasaran"
+    },
+    {
+      "code": "X5",
+      "name": "Kualitas Layanan"
+    },
+    {
+      "code": "Y1",
+      "name": "Inovasi Ekonomi Kreatif"
+    },
+    {
+      "code": "Y2",
+      "name": "Kepuasan Pengunjung"
+    },
+    {
+      "code": "Y3",
+      "name": "Orientasi Kewirausahaan"
+    },
+    {
+      "code": "Y4",
+      "name": "Penerimaan Daerah"
+    },
+    {
+      "code": "Y5",
+      "name": "Kunjungan Wisata"
+    },
+    {
+      "code": "Y6",
+      "name": "Keunggulan Bersaing"
+    }
+  ],
+  "indicators": [
+    {
+      "variable_code": "X1",
+      "code": "X1.1",
+      "name": "Kualitas pelayanan wisata",
+      "description": "Pengelola wisata memberikan pelayanan yang baik kepada wisatawan."
+    },
+    {
+      "variable_code": "X1",
+      "code": "X1.2",
+      "name": "Pemahaman terhadap kebutuhan wisatawan",
+      "description": "Pengelola wisata memahami kebutuhan dan keinginan wisatawan."
+    },
+    {
+      "variable_code": "X1",
+      "code": "X1.3",
+      "name": "Kemampuan pemasaran destinasi wisata",
+      "description": "Pengelola wisata mampu mempromosikan destinasi wisata dengan baik."
+    },
+    {
+      "variable_code": "X1",
+      "code": "X1.4",
+      "name": "Kemampuan memahami pasar wisata",
+      "description": "Pengelola wisata memahami perkembangan pasar wisata."
+    },
+    {
+      "variable_code": "X1",
+      "code": "X1.5",
+      "name": "Kemampuan bersaing dengan destinasi wisata lain",
+      "description": "Pengelola wisata mampu bersaing dengan destinasi wisata lain."
+    },
+    {
+      "variable_code": "X1",
+      "code": "X1.6",
+      "name": "Kemampuan melakukan inovasi wisata",
+      "description": "Pengelola wisata melakukan inovasi dalam pengembangan wisata."
+    },
+    {
+      "variable_code": "X1",
+      "code": "X1.7",
+      "name": "Koordinasi internal dalam pengelolaan wisata",
+      "description": "Antarbagian dalam pengelolaan wisata bekerja sama dengan baik."
+    },
+    {
+      "variable_code": "X1",
+      "code": "X1.8",
+      "name": "Kemampuan menjaga kualitas pelayanan wisata",
+      "description": "Pengelola wisata menjaga kualitas pelayanan kepada wisatawan."
+    },
+    {
+      "variable_code": "X2",
+      "code": "X2.1",
+      "name": "Ketersediaan fasilitas akomodasi",
+      "description": "Desa wisata memiliki fasilitas akomodasi (homestay/penginapan) yang layak dan memadai bagi wisatawan."
+    },
+    {
+      "variable_code": "X2",
+      "code": "X2.2",
+      "name": "Ketersediaan fasilitas kuliner",
+      "description": "Tersedia warung makan atau restoran yang menyajikan makanan khas daerah dan mudah dijangkau wisatawan."
+    },
+    {
+      "variable_code": "X2",
+      "code": "X2.3",
+      "name": "Kelayakan fasilitas sanitasi",
+      "description": "Fasilitas toilet/kamar mandi umum tersedia dalam kondisi bersih dan terawat di area wisata."
+    },
+    {
+      "variable_code": "X2",
+      "code": "X2.4",
+      "name": "Ketersediaan pusat informasi wisata",
+      "description": "Terdapat pusat informasi atau papan petunjuk yang membantu wisatawan menemukan lokasi objek wisata."
+    },
+    {
+      "variable_code": "X2",
+      "code": "X2.5",
+      "name": "Ketersediaan fasilitas parkir",
+      "description": "Desa wisata menyediakan area parkir yang aman dan memadai bagi kendaraan wisatawan."
+    },
+    {
+      "variable_code": "X2",
+      "code": "X2.6",
+      "name": "Ketersediaan fasilitas ibadah",
+      "description": "Tersedia fasilitas ibadah yang bersih dan mudah dijangkau wisatawan di area desa wisata."
+    },
+    {
+      "variable_code": "X2",
+      "code": "X2.7",
+      "name": "Ketersediaan toko oleh-oleh",
+      "description": "Terdapat toko oleh-oleh atau pusat penjualan produk lokal yang dapat dikunjungi wisatawan."
+    },
+    {
+      "variable_code": "X2",
+      "code": "X2.8",
+      "name": "Kelayakan fasilitas rekreasi",
+      "description": "Fasilitas hiburan dan wahana rekreasi di desa wisata berfungsi dengan baik dan terawat."
+    },
+    {
+      "variable_code": "X3",
+      "code": "X3.1",
+      "name": "Kondisi jalan menuju desa wisata",
+      "description": "Kondisi jalan menuju desa wisata dalam keadaan baik dan mudah dilalui kendaraan."
+    },
+    {
+      "variable_code": "X3",
+      "code": "X3.2",
+      "name": "Ketersediaan transportasi umum",
+      "description": "Tersedia moda transportasi umum yang dapat digunakan wisatawan untuk mencapai desa wisata."
+    },
+    {
+      "variable_code": "X3",
+      "code": "X3.3",
+      "name": "Keandalan jaringan listrik",
+      "description": "Jaringan listrik di kawasan wisata berfungsi dengan baik dan andal untuk mendukung aktivitas wisata."
+    },
+    {
+      "variable_code": "X3",
+      "code": "X3.4",
+      "name": "Ketersediaan akses internet dan telekomunikasi",
+      "description": "Akses jaringan internet dan sinyal telekomunikasi tersedia dengan baik di area desa wisata."
+    },
+    {
+      "variable_code": "X3",
+      "code": "X3.5",
+      "name": "Kejelasan rambu dan petunjuk arah",
+      "description": "Terdapat rambu-rambu jalan dan petunjuk arah yang jelas menuju lokasi wisata."
+    },
+    {
+      "variable_code": "X3",
+      "code": "X3.6",
+      "name": "Keterjangkauan jarak dan waktu tempuh",
+      "description": "Jarak dan waktu tempuh dari pusat kota atau terminal menuju desa wisata terjangkau bagi wisatawan."
+    },
+    {
+      "variable_code": "X3",
+      "code": "X3.7",
+      "name": "Kualitas drainase dan air bersih",
+      "description": "Infrastruktur drainase dan pengelolaan air bersih di kawasan desa wisata berjalan dengan baik."
+    },
+    {
+      "variable_code": "X3",
+      "code": "X3.8",
+      "name": "Aksesibilitas dalam kawasan wisata",
+      "description": "Kondisi jalan dan aksesibilitas di dalam kawasan desa wisata memudahkan wisatawan berkeliling."
+    },
+    {
+      "variable_code": "X4",
+      "code": "X4.1",
+      "name": "Kerjasama dengan agen perjalanan",
+      "description": "Pengelola desa wisata menjalin kerjasama aktif dengan agen perjalanan atau tour operator untuk mempromosikan wisata."
+    },
+    {
+      "variable_code": "X4",
+      "code": "X4.2",
+      "name": "Kehadiran di platform digital pariwisata",
+      "description": "Desa wisata terdaftar dan dipromosikan melalui platform digital pariwisata resmi."
+    },
+    {
+      "variable_code": "X4",
+      "code": "X4.3",
+      "name": "Kemitraan dengan pemerintah daerah",
+      "description": "Terdapat program kemitraan antara desa wisata dengan pemerintah daerah dalam kegiatan promosi pariwisata."
+    },
+    {
+      "variable_code": "X4",
+      "code": "X4.4",
+      "name": "Keikutsertaan dalam pameran wisata",
+      "description": "Pengelola desa wisata aktif mengikuti pameran atau festival wisata untuk memperkenalkan potensi desa."
+    },
+    {
+      "variable_code": "X4",
+      "code": "X4.5",
+      "name": "Keterlibatan komunitas lokal dalam pemasaran",
+      "description": "Komunitas lokal terlibat aktif dalam kegiatan pemasaran dan promosi desa wisata."
+    },
+    {
+      "variable_code": "X4",
+      "code": "X4.6",
+      "name": "Hubungan dengan media",
+      "description": "Desa wisata menjalin hubungan baik dengan media lokal maupun nasional untuk publikasi destinasi wisata."
+    },
+    {
+      "variable_code": "X4",
+      "code": "X4.7",
+      "name": "Paket wisata kolaboratif",
+      "description": "Terdapat paket wisata kolaboratif antara desa wisata dengan destinasi wisata lain di Kota Batu."
+    },
+    {
+      "variable_code": "X4",
+      "code": "X4.8",
+      "name": "Jejaring dengan komunitas wisatawan",
+      "description": "Pengelola desa wisata memiliki jejaring dengan komunitas wisatawan atau komunitas pecinta wisata."
+    },
+    {
+      "variable_code": "X5",
+      "code": "X5.1",
+      "name": "Keramahan pengelola dan warga",
+      "description": "Pengelola dan warga desa wisata memberikan sambutan dan pelayanan yang ramah kepada setiap wisatawan yang datang."
+    },
+    {
+      "variable_code": "X5",
+      "code": "X5.2",
+      "name": "Keandalan informasi wisata",
+      "description": "Pelayanan informasi wisata diberikan secara akurat, cepat, dan dapat diandalkan oleh wisatawan."
+    },
+    {
+      "variable_code": "X5",
+      "code": "X5.3",
+      "name": "Ketanggapan terhadap keluhan",
+      "description": "Pengelola desa wisata sigap dan tanggap dalam menangani keluhan atau permasalahan yang dihadapi wisatawan."
+    },
+    {
+      "variable_code": "X5",
+      "code": "X5.4",
+      "name": "Kemampuan komunikasi pelayan wisata",
+      "description": "Warga di wilayah kami memiliki kemampuan komunikasi yang baik dalam melayani wisatawan dari berbagai daerah."
+    },
+    {
+      "variable_code": "X5",
+      "code": "X5.5",
+      "name": "Jaminan keamanan dan kenyamanan",
+      "description": "Pengelola desa wisata menjamin keamanan dan kenyamanan wisatawan selama berada di kawasan wisata."
+    },
+    {
+      "variable_code": "X5",
+      "code": "X5.6",
+      "name": "Konsistensi pelayanan",
+      "description": "Pelayanan di desa wisata kami diberikan secara konsisten dan tidak membeda-bedakan latar belakang wisatawan."
+    },
+    {
+      "variable_code": "X5",
+      "code": "X5.7",
+      "name": "Empati terhadap wisatawan",
+      "description": "Pengelola desa wisata menunjukkan kepedulian dan perhatian yang tulus terhadap kebutuhan pribadi wisatawan."
+    },
+    {
+      "variable_code": "X5",
+      "code": "X5.8",
+      "name": "Penampilan fisik pengelola dan fasilitas",
+      "description": "Penampilan fisik pengelola, warga, dan fasilitas desa wisata mencerminkan standar kebersihan dan kerapian yang baik."
+    },
+    {
+      "variable_code": "Y1",
+      "code": "Y1.1",
+      "name": "Pengembangan produk kerajinan lokal",
+      "description": "Masyarakat di wilayah kami mengembangkan produk kerajinan tangan khas lokal yang diminati dan dibeli wisatawan."
+    },
+    {
+      "variable_code": "Y1",
+      "code": "Y1.2",
+      "name": "Pertunjukan seni budaya lokal",
+      "description": "Terdapat pertunjukan seni budaya lokal yang dikemas secara kreatif sebagai atraksi wisata unggulan desa."
+    },
+    {
+      "variable_code": "Y1",
+      "code": "Y1.3",
+      "name": "Pengembangan kuliner khas daerah",
+      "description": "Kuliner khas daerah dikembangkan secara kreatif dan menjadi daya tarik utama kunjungan wisatawan ke desa."
+    },
+    {
+      "variable_code": "Y1",
+      "code": "Y1.4",
+      "name": "Paket pengalaman wisata berbasis kearifan lokal",
+      "description": "Masyarakat di wilayah kami aktif menciptakan paket pengalaman wisata yang unik dan berbasis kearifan lokal."
+    },
+    {
+      "variable_code": "Y1",
+      "code": "Y1.5",
+      "name": "Usaha ekonomi kreatif berbasis digital",
+      "description": "Terdapat usaha ekonomi kreatif berbasis digital yang berkembang di desa kami."
+    },
+    {
+      "variable_code": "Y1",
+      "code": "Y1.6",
+      "name": "Keterlibatan komunitas kreatif lokal",
+      "description": "Pengelola desa wisata melibatkan komunitas kreatif lokal dalam pengembangan program dan atraksi wisata."
+    },
+    {
+      "variable_code": "Y1",
+      "code": "Y1.7",
+      "name": "Pemasaran produk keluar wilayah",
+      "description": "Produk ekonomi kreatif dari desa wisata kami telah berhasil dipasarkan di luar wilayah Kota Batu."
+    },
+    {
+      "variable_code": "Y1",
+      "code": "Y1.8",
+      "name": "Peningkatan pendapatan dari ekonomi kreatif",
+      "description": "Pendapatan warga dari sektor ekonomi kreatif berbasis wisata terus meningkat dari tahun ke tahun."
+    },
+    {
+      "variable_code": "Y2",
+      "code": "Y2.1",
+      "name": "Kesesuaian harapan dengan pengalaman wisata",
+      "description": "Pengalaman berwisata di desa wisata kami sesuai dengan harapan yang dimiliki wisatawan sebelum berkunjung."
+    },
+    {
+      "variable_code": "Y2",
+      "code": "Y2.2",
+      "name": "Kepuasan terhadap kualitas atraksi wisata",
+      "description": "Wisatawan merasa puas dengan kualitas atraksi dan daya tarik yang ditawarkan oleh desa wisata kami."
+    },
+    {
+      "variable_code": "Y2",
+      "code": "Y2.3",
+      "name": "Kepuasan terhadap fasilitas yang tersedia",
+      "description": "Wisatawan merasa puas dengan fasilitas yang tersedia selama berkunjung ke desa wisata kami."
+    },
+    {
+      "variable_code": "Y2",
+      "code": "Y2.4",
+      "name": "Kepuasan terhadap pelayanan pengelola",
+      "description": "Wisatawan merasa puas dengan sikap dan pelayanan yang diberikan oleh pengelola dan warga desa wisata kami."
+    },
+    {
+      "variable_code": "Y2",
+      "code": "Y2.5",
+      "name": "Kepuasan terhadap harga yang dibayarkan",
+      "description": "Wisatawan merasa bahwa harga yang mereka bayarkan sebanding dengan pengalaman wisata yang mereka dapatkan."
+    },
+    {
+      "variable_code": "Y2",
+      "code": "Y2.6",
+      "name": "Kepuasan terhadap kebersihan dan keamanan",
+      "description": "Wisatawan merasa puas dengan tingkat kebersihan dan keamanan lingkungan desa wisata kami."
+    },
+    {
+      "variable_code": "Y2",
+      "code": "Y2.7",
+      "name": "Niat kunjungan ulang wisatawan",
+      "description": "Wisatawan yang telah berkunjung menyatakan niat untuk kembali mengunjungi desa wisata kami di masa mendatang."
+    },
+    {
+      "variable_code": "Y2",
+      "code": "Y2.8",
+      "name": "Kesediaan merekomendasikan desa wisata",
+      "description": "Wisatawan bersedia merekomendasikan desa wisata kami kepada keluarga atau teman mereka."
+    },
+    {
+      "variable_code": "Y3",
+      "code": "Y3.1",
+      "name": "Keberanian membuka usaha wisata baru",
+      "description": "Warga di wilayah kami berani membuka usaha baru yang berkaitan dengan sektor pariwisata desa."
+    },
+    {
+      "variable_code": "Y3",
+      "code": "Y3.2",
+      "name": "Proaktivitas memanfaatkan peluang wisata",
+      "description": "Pengelola desa wisata proaktif dalam mengidentifikasi dan memanfaatkan peluang bisnis wisata yang baru."
+    },
+    {
+      "variable_code": "Y3",
+      "code": "Y3.3",
+      "name": "Keberanian mengambil risiko",
+      "description": "Warga dan pengelola desa wisata berani mencoba strategi atau metode baru meskipun terdapat risiko kegagalan."
+    },
+    {
+      "variable_code": "Y3",
+      "code": "Y3.4",
+      "name": "Jiwa kompetitif",
+      "description": "Desa wisata memiliki jiwa kompetitif yang kuat dalam bersaing secara sehat dengan destinasi wisata lain."
+    },
+    {
+      "variable_code": "Y3",
+      "code": "Y3.5",
+      "name": "Kemandirian pengelolaan usaha wisata",
+      "description": "Warga di wilayah kami mampu mandiri dalam mengelola dan mengembangkan usaha wisata."
+    },
+    {
+      "variable_code": "Y3",
+      "code": "Y3.6",
+      "name": "Belajar dari pengalaman dan kegagalan",
+      "description": "Pengelola desa wisata aktif belajar dari pengalaman dan kegagalan untuk terus memperbaiki kinerja wisata."
+    },
+    {
+      "variable_code": "Y3",
+      "code": "Y3.7",
+      "name": "Keterlibatan generasi muda",
+      "description": "Terdapat generasi muda di wilayah kami yang termotivasi untuk terlibat dalam pengembangan wirausaha desa wisata."
+    },
+    {
+      "variable_code": "Y3",
+      "code": "Y3.8",
+      "name": "Visi jangka panjang dan rencana bisnis",
+      "description": "Pengelola desa wisata memiliki visi jangka panjang dan rencana bisnis yang jelas untuk pengembangan desa wisata."
+    },
+    {
+      "variable_code": "Y4",
+      "code": "Y4.1",
+      "name": "Kontribusi wisata terhadap pendapatan desa",
+      "description": "Sektor pariwisata di wilayah kami memberikan kontribusi nyata terhadap peningkatan pendapatan desa/daerah."
+    },
+    {
+      "variable_code": "Y4",
+      "code": "Y4.2",
+      "name": "Transparansi pengelolaan retribusi wisata",
+      "description": "Retribusi dari kunjungan wisatawan ke desa wisata dikelola secara transparan dan masuk ke kas desa/daerah."
+    },
+    {
+      "variable_code": "Y4",
+      "code": "Y4.3",
+      "name": "Kepatuhan pajak dan retribusi",
+      "description": "Usaha wisata di wilayah kami telah membayar pajak dan retribusi daerah sesuai ketentuan yang berlaku."
+    },
+    {
+      "variable_code": "Y4",
+      "code": "Y4.4",
+      "name": "Peningkatan pendapatan dari wisata",
+      "description": "Pendapatan dari sektor pariwisata di wilayah kami mengalami peningkatan dalam tiga tahun terakhir."
+    },
+    {
+      "variable_code": "Y4",
+      "code": "Y4.5",
+      "name": "Alokasi dana desa untuk wisata",
+      "description": "Dana desa yang kami terima sebagian dialokasikan kembali untuk pengembangan infrastruktur dan fasilitas wisata."
+    },
+    {
+      "variable_code": "Y4",
+      "code": "Y4.6",
+      "name": "Penciptaan lapangan kerja dari wisata",
+      "description": "Sektor wisata di wilayah kami menciptakan lapangan kerja baru yang meningkatkan pendapatan warga setempat."
+    },
+    {
+      "variable_code": "Y4",
+      "code": "Y4.7",
+      "name": "Akuntabilitas keuangan wisata",
+      "description": "Pengelolaan keuangan dari retribusi wisata di desa kami dilakukan secara akuntabel dan dapat dipertanggungjawabkan."
+    },
+    {
+      "variable_code": "Y4",
+      "code": "Y4.8",
+      "name": "Kontribusi wisata pada pembangunan fasilitas umum",
+      "description": "Penerimaan dari sektor pariwisata berkontribusi pada pembangunan fasilitas umum yang dinikmati warga dan wisatawan."
+    },
+    {
+      "variable_code": "Y5",
+      "code": "Y5.1",
+      "name": "Peningkatan jumlah kunjungan wisatawan",
+      "description": "Jumlah wisatawan yang berkunjung ke desa wisata di wilayah kami mengalami peningkatan dari tahun ke tahun."
+    },
+    {
+      "variable_code": "Y5",
+      "code": "Y5.2",
+      "name": "Jangkauan asal wisatawan",
+      "description": "Desa wisata di wilayah kami mampu menarik kunjungan wisatawan dari berbagai daerah di luar Kota Batu."
+    },
+    {
+      "variable_code": "Y5",
+      "code": "Y5.3",
+      "name": "Tingkat kunjungan ulang wisatawan",
+      "description": "Wisatawan yang pernah berkunjung banyak yang kembali mengunjungi desa wisata kami (kunjungan ulang)."
+    },
+    {
+      "variable_code": "Y5",
+      "code": "Y5.4",
+      "name": "Kunjungan wisata di luar musim liburan",
+      "description": "Desa wisata kami ramai dikunjungi tidak hanya pada musim liburan, tetapi juga pada hari-hari biasa."
+    },
+    {
+      "variable_code": "Y5",
+      "code": "Y5.5",
+      "name": "Durasi kunjungan wisatawan",
+      "description": "Durasi kunjungan wisatawan di desa wisata kami cukup lama karena banyaknya atraksi dan aktivitas yang tersedia."
+    },
+    {
+      "variable_code": "Y5",
+      "code": "Y5.6",
+      "name": "Kunjungan wisatawan mancanegara/luar Jawa",
+      "description": "Jumlah wisatawan mancanegara atau wisatawan dari luar Jawa yang berkunjung ke desa wisata kami terus meningkat."
+    },
+    {
+      "variable_code": "Y5",
+      "code": "Y5.7",
+      "name": "Rekomendasi melalui media sosial",
+      "description": "Desa wisata kami sering direkomendasikan oleh wisatawan kepada keluarga atau teman mereka melalui media sosial."
+    },
+    {
+      "variable_code": "Y5",
+      "code": "Y5.8",
+      "name": "Efektivitas event wisata dalam menarik pengunjung",
+      "description": "Kegiatan atau event wisata yang diadakan di desa kami berhasil menarik kunjungan wisatawan dalam jumlah besar."
+    },
+    {
+      "variable_code": "Y6",
+      "code": "Y6.1",
+      "name": "Keunikan daya tarik wisata",
+      "description": "Desa wisata di wilayah kami memiliki daya tarik yang unik dan khas yang tidak ditemukan di destinasi wisata lain."
+    },
+    {
+      "variable_code": "Y6",
+      "code": "Y6.2",
+      "name": "Harga yang kompetitif",
+      "description": "Harga tiket masuk dan biaya layanan di desa wisata kami kompetitif dibanding destinasi wisata serupa di Kota Batu."
+    },
+    {
+      "variable_code": "Y6",
+      "code": "Y6.3",
+      "name": "Reputasi destinasi wisata",
+      "description": "Desa wisata kami memiliki reputasi yang baik dan dikenal luas oleh wisatawan di tingkat regional maupun nasional."
+    },
+    {
+      "variable_code": "Y6",
+      "code": "Y6.4",
+      "name": "Keunggulan budaya dan kearifan lokal",
+      "description": "Keunggulan budaya dan kearifan lokal desa kami menjadi daya pembeda utama yang menarik minat wisatawan."
+    },
+    {
+      "variable_code": "Y6",
+      "code": "Y6.5",
+      "name": "Pengalaman wisata yang autentik",
+      "description": "Desa wisata kami mampu bersaing dengan destinasi wisata modern karena memiliki pengalaman wisata yang autentik."
+    },
+    {
+      "variable_code": "Y6",
+      "code": "Y6.6",
+      "name": "Profesionalisme pengelolaan wisata",
+      "description": "Pengelolaan desa wisata yang profesional menjadi keunggulan yang diakui oleh wisatawan dan pemangku kepentingan."
+    },
+    {
+      "variable_code": "Y6",
+      "code": "Y6.7",
+      "name": "Inovasi berkelanjutan",
+      "description": "Desa wisata kami terus berinovasi sehingga selalu memiliki sesuatu yang baru untuk ditawarkan kepada wisatawan."
+    },
+    {
+      "variable_code": "Y6",
+      "code": "Y6.8",
+      "name": "Kolaborasi pemangku kepentingan",
+      "description": "Kolaborasi yang solid antara warga, pengelola, dan pemerintah menjadi kekuatan utama daya saing desa wisata kami."
+    }
+  ],
+  "villages": [
+    {
+      "id": 1,
+      "name": "Oro-oro Ombo"
+    },
+    {
+      "id": 2,
+      "name": "Ngaglik"
+    },
+    {
+      "id": 3,
+      "name": "Pesanggrahan"
+    },
+    {
+      "id": 4,
+      "name": "Songgokerto"
+    },
+    {
+      "id": 5,
+      "name": "Sumberejo"
+    },
+    {
+      "id": 6,
+      "name": "Temas"
+    },
+    {
+      "id": 7,
+      "name": "Sisir"
+    },
+    {
+      "id": 8,
+      "name": "Sidomulyo"
+    },
+    {
+      "id": 9,
+      "name": "Bumiaji"
+    },
+    {
+      "id": 10,
+      "name": "Punten"
+    },
+    {
+      "id": 11,
+      "name": "Tulungrejo"
+    },
+    {
+      "id": 12,
+      "name": "Sumbergondo"
+    },
+    {
+      "id": 13,
+      "name": "Bulukerto"
+    },
+    {
+      "id": 14,
+      "name": "Gunungsari"
+    },
+    {
+      "id": 15,
+      "name": "Pandanrejo"
+    },
+    {
+      "id": 16,
+      "name": "Giripurno"
+    },
+    {
+      "id": 17,
+      "name": "Sumberbrantas"
+    },
+    {
+      "id": 18,
+      "name": "Beji"
+    },
+    {
+      "id": 19,
+      "name": "Torongrejo"
+    },
+    {
+      "id": 20,
+      "name": "Mojorejo"
+    },
+    {
+      "id": 21,
+      "name": "Pendem"
+    },
+    {
+      "id": 22,
+      "name": "Junrejo"
+    },
+    {
+      "id": 23,
+      "name": "Dadaprejo"
+    },
+    {
+      "id": 24,
+      "name": "Tlekung"
+    }
+  ]
+}

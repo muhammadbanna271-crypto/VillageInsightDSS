@@ -3,7 +3,7 @@
 > VillageInsight DSS
 > Adaptive Decision Support System for Tourism Village Development
 
-Version : 0.1.0
+Version : 0.9.0
 
 Status : Active Development
 
@@ -29,9 +29,10 @@ Develop a web-based Decision Support System (DSS) that assists the government in
 
 Research Methods
 
-- Path Analysis
-- Principal Component Analysis (PCA)
-- Cluster Analysis
+- K-Means Clustering
+- Random Forest (feature importance)
+- TOPSIS (priority ranking within cluster)
+- PCA (visualization only, 2D projection of the feature matrix)
 
 Dataset
 
@@ -42,30 +43,29 @@ Variables
 
 Independent Variables
 
-- X1
-- X2
-- X3
-- X4
-- X5
+- X1 - Orientasi Pasar
+- X2 - Fasilitas Pariwisata
+- X3 - Infrastruktur dan Aksesibilitas
+- X4 - Hubungan Pemasaran
+- X5 - Kualitas Layanan
 
 Mediator Variables
 
-- Y1
-- Y2
-- Y3
+- Y1 - Inovasi Ekonomi Kreatif
+- Y2 - Kepuasan Pengunjung
+- Y3 - Orientasi Kewirausahaan
 
 Dependent Variables
 
-- Y4
-- Y5
-- Y6
+- Y4 - Penerimaan Daerah (PAD)
+- Y5 - Kunjungan Wisata
+- Y6 - Keunggulan Bersaing
 
 Research Outputs
 
-- Path Coefficient
-- PCA Components
 - Cluster Labels
-- Recommendation Basis
+- Feature Importance Ranking
+- TOPSIS Priority Score
 
 ---
 
@@ -108,8 +108,8 @@ Frontend
 
 Visualization
 
-- Plotly
-- Leaflet
+- Chart.js
+- GIS map: planned, not yet implemented
 
 Machine Learning
 
@@ -134,43 +134,23 @@ backend/
 
 apps/
 
-accounts/
+master/
 
-villages/
+survey/
 
-variables/
+respondent/
 
-indicators/
-
-questionnaires/
-
-surveys/
-
-respondents/
+response/
 
 analytics/
 
 dashboard/
 
-assessment/
-
 recommendation/
-
-reports/
-
-administration/
-
-audit/
 
 config/
 
-core/
-
 common/
-
-machine_learning/
-
-media/
 
 static/
 
@@ -178,15 +158,7 @@ templates/
 
 manage.py
 
-datasets/
-
-deployment/
-
-docs/
-
-scripts/
-
-tests/
+(datasets/, deployment/, docs/, scripts/, tests/ -- planned, not yet created)
 
 ---
 
@@ -237,61 +209,35 @@ Always follow
 
 # 8. DJANGO APPLICATIONS
 
-accounts
+master
 
-Authentication
+Village, district, variable, indicator, questionnaire, cluster master data (CRUD)
 
-villages
+survey
 
-Village Management
+Survey and survey-village management
 
-variables
+respondent
 
-Research Variables
+Respondent management
 
-indicators
+response
 
-Research Indicators
-
-questionnaires
-
-Question Bank
-
-respondents
-
-Respondent Management
-
-surveys
-
-Survey Management
+Survey answers, bulk Excel import, scoring
 
 analytics
 
-Analytics Engine
+Score aggregation, K-Means clustering, feature importance, ML model registry
 
 dashboard
 
-Dashboard
-
-assessment
-
-Assessment Engine
+Executive dashboard
 
 recommendation
 
-Recommendation Engine
+TOPSIS ranking within each cluster
 
-reports
-
-Reporting
-
-administration
-
-Administration
-
-audit
-
-Audit Log
+(accounts, assessment, reports, administration, audit are not separate apps -- their responsibilities are folded into the apps above, e.g. auth uses Django's built-in accounts, exports live inside analytics/ and recommendation/)
 
 ---
 
@@ -345,16 +291,14 @@ trx_recommendation
 
 # 12. MACHINE LEARNING
 
-Artifacts
+Artifacts (joblib, not pickle)
 
-- scaler.pkl
-- pca.pkl
-- cluster.pkl
+- village_scaler.joblib
+- village_kmeans.joblib
 
-Rules
+Decision logic
 
-- cluster_rules.json
-- recommendation_rules.json
+- TOPSIS ranking is computed directly in code (recommendation/services/topsis.py), not from external JSON rule files
 
 ---
 
