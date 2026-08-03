@@ -1,10 +1,10 @@
+import re
+
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models.deletion import ProtectedError
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.db.models import IntegerField
-from django.db.models.functions import Cast, Substr
 from common.views import (
     BaseCreateView,
     BaseDeleteView,
@@ -34,23 +34,11 @@ class VillageListView(BaseListView):
 
     def get_queryset(self):
 
-        return (
+        queryset = (
 
             super()
 
             .get_queryset()
-
-            .annotate(
-
-                code_number=Cast(
-
-                    Substr("code", 2),
-
-                    IntegerField(),
-
-                )   
-
-            )
 
             .select_related(
 
@@ -60,13 +48,18 @@ class VillageListView(BaseListView):
 
             )
 
-            .order_by(
-
-                "code_number",
-
-            )
-
         )
+
+        # Urutkan berdasarkan angka di kode desa, dilakukan di Python
+        # (bukan lewat query database) supaya tidak bergantung pada
+        # fungsi SQL tertentu yang dukungannya beda-beda antar database
+        # (PostgreSQL vs SQLite). Aman untuk kode format apa pun --
+        # "V18", "DS18", dll -- karena cuma ambil digitnya saja.
+        def code_number(village):
+            digits = re.sub(r"\D", "", village.code)
+            return int(digits) if digits else 0
+
+        return sorted(queryset, key=code_number)
 
 
 class VillageDetailView(BaseDetailView):

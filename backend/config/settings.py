@@ -248,6 +248,38 @@ LOGOUT_REDIRECT_URL = "login"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        # django.request: ini yang menangkap exception dari view (500 error).
+        # Tanpa handler eksplisit di sini, error hilang begitu saja waktu
+        # DEBUG=False -- Django cuma mencoba kirim email ke admin (yang
+        # biasanya tidak dikonfigurasi), bukan mencetak ke console.
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
 }
 
 # --------------------------------------------------
