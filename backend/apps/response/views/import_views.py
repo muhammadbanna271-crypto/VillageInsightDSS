@@ -18,6 +18,21 @@ def import_response(request):
 
         excel_file = request.FILES.get("excel_file")
 
+        if excel_file and not excel_file.name.lower().endswith(".xlsx"):
+
+            messages.error(
+                request,
+                (
+                    f"File '{excel_file.name}' bukan format .xlsx. "
+                    "Saat ini sistem hanya bisa membaca file Excel (.xlsx) -- "
+                    "CSV belum didukung karena parser yang dipakai "
+                    "(openpyxl) tidak bisa membuka file CSV. Simpan ulang "
+                    "file sebagai .xlsx dari Excel/Google Sheets sebelum diunggah."
+                ),
+            )
+
+            return redirect("response:response-import")
+
         if not survey_id or not excel_file:
 
             messages.error(

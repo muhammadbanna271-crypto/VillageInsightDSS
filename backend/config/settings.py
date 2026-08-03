@@ -1,7 +1,7 @@
 """
 Django settings for VillageInsight DSS.
 
-Version : 1.0.0
+Version : 0.9.0 (core system complete, deployment pending)
 """
 
 from pathlib import Path
@@ -35,6 +35,24 @@ ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
     "127.0.0.1,localhost"
 ).split(",")
+
+# CSRF_TRUSTED_ORIGINS wajib diisi kalau sistem diakses lewat domain
+# asli di belakang reverse proxy (Nginx) -- kalau kosong, Django akan
+# menolak semua POST request (termasuk login) begitu bukan localhost.
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+
+# File upload size limit. Django's own default is 2.5MB, which is
+# smaller than the 20M already allowed by nginx (see nginx/nginx.conf,
+# client_max_body_size). Keeping both layers in sync at 20MB so a
+# real response-data Excel file (with formatting, multiple sheets)
+# doesn't get rejected by Django even though nginx already let it through.
+MAX_UPLOAD_SIZE_MB = int(os.getenv("MAX_UPLOAD_SIZE_MB", "20"))
+DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_SIZE_MB * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_SIZE_MB * 1024 * 1024
 
 # --------------------------------------------------
 # APPLICATION DEFINITION
