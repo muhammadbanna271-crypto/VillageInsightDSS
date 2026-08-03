@@ -1,0 +1,19 @@
+# Kunci semua file teks ke LF, supaya Git di Windows berhenti
+# menandai ribuan baris sebagai "berubah" gara-gara CRLF vs LF --
+# ini murni kosmetik, bukan perubahan isi, tapi bikin git status/diff
+# jadi tidak bisa dipercaya kalau dibiarkan.
+* text=auto eol=lf
+
+# File biner -- jangan disentuh sama sekali oleh normalisasi baris baru
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.xlsx binary
+*.joblib binary
+*.pkl binary
