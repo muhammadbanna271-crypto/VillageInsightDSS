@@ -1,0 +1,259 @@
+import json
+from datetime import date
+from decimal import Decimal
+
+from django.conf import settings
+from django.db import transaction
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
+
+from apps.chatbot.models import ChatbotUsage
+from apps.chatbot.services import ClaudeChatService, DeepSeekChatService
+
+
+SESSION_COUNT_KEY = "chatbot_message_count"
+
+CLAUDE_HISTORY_KEY = "chatbot_history_claude"
+
+DEEPSEEK_HISTORY_KEY = "chatbot_history_deepseek"
+
+CLAUDE_UNLOCKED_KEY = "chatbot_claude_unlocked"
+
+
+def chat_page(request):
+    """
+    Halaman chat publik -- TIDAK memakai layout admin (tanpa sidebar),
+    supaya warga tidak melihat menu Master Data/Survey/dsb.
+    """
+
+    return render(
+        request,
+        "chatbot/public_chat.html",
+        {
+            "claude_unlocked": request.session.get(
+                CLAUDE_UNLOCKED_KEY, False
+            ),
+        },
+    )
+
+
+@require_POST
+@csrf_protect
+def unlock_claude(request):
+
+    try:
+
+        payload = json.loads(request.body or "{}")
+
+    except json.JSONDecodeError:
+
+        return JsonResponse(
+            {"error": "Format permintaan tidak valid."},
+            status=400,
+        )
+
+    password = payload.get("password") or ""
+
+    correct_password = settings.CHATBOT_CLAUDE_PASSWORD
+
+    if not correct_password:
+
+        return JsonResponse(
+            {
+                "error": (
+                    "Mesin Claude belum diaktifkan oleh admin "
+                    "(password belum diatur)."
+                ),
+            },
+            status=503,
+        )
+
+    if password != correct_password:
+
+        return JsonResponse(
+            {"error": "Password salah."},
+            status=403,
+        )
+
+    request.session[CLAUDE_UNLOCKED_KEY] = True
+
+    request.session.modified = True
+
+    return JsonResponse({"unlocked": True})
+
+
+def _current_month_usage():
+
+    month_key = date.today().strftime("%Y-%m")
+
+    usage, _ = ChatbotUsage.objects.get_or_create(
+        month=month_key,
+    )
+
+    return usage
+
+
+@require_POST
+@csrf_protect
+def chat_message(request):
+
+    try:
+
+        payload = json.loads(request.body or "{}")
+
+    except json.JSONDecodeError:
+
+        return JsonResponse(
+            {"error": "Format permintaan tidak valid."},
+            status=400,
+        )
+
+    message = (payload.get("message") or "").strip()
+
+    engine = payload.get("engine") or "deepseek"
+
+    if engine not in ("claude", "deepseek"):
+
+        return JsonResponse(
+            {"error": "Engine tidak dikenali."},
+            status=400,
+        )
+
+    if not message:
+
+        return JsonResponse(
+            {"error": "Pesan tidak boleh kosong."},
+            status=400,
+        )
+
+    if len(message) > 500:
+
+        return JsonResponse(
+            {
+                "error": (
+                    "Pesan terlalu panjang, maksimal 500 karakter."
+                ),
+            },
+            status=400,
+        )
+
+    # ---------------- Password gate khusus Claude ----------------
+
+    if engine == "claude" and not request.session.get(
+        CLAUDE_UNLOCKED_KEY, False
+    ):
+
+        return JsonResponse(
+            {
+                "error": (
+                    "Mesin Claude terkunci. Masukkan password "
+                    "terlebih dahulu."
+                ),
+            },
+            status=403,
+        )
+
+    # ---------------- Rate limit per sesi (kedua engine) ----------------
+
+    count = request.session.get(SESSION_COUNT_KEY, 0)
+
+    limit = settings.CHATBOT_MAX_MESSAGES_PER_SESSION
+
+    if count >= limit:
+
+        return JsonResponse(
+            {
+                "error": (
+                    "Kamu sudah mencapai batas jumlah pertanyaan "
+                    "untuk sesi ini. Silakan coba lagi nanti."
+                ),
+            },
+            status=429,
+        )
+
+    # ---------------- Batas anggaran bulanan (khusus Claude) ----------------
+
+    usage = None
+
+    projected_cost = None
+
+    if engine == "claude":
+
+        usage = _current_month_usage()
+
+        projected_cost = usage.estimated_cost_usd + Decimal(
+            str(settings.CHATBOT_ESTIMATED_COST_PER_MESSAGE_USD)
+        )
+
+        budget = Decimal(str(settings.CHATBOT_MONTHLY_BUDGET_USD))
+
+        if projected_cost > budget:
+
+            return JsonResponse(
+                {
+                    "error": (
+                        "Maaf, mesin Claude untuk bulan ini sedang "
+                        "penuh. Coba pakai mesin Planning, Reasoning "
+                        "and User Engagement, atau kembali lagi "
+                        "bulan depan."
+                    ),
+                },
+                status=429,
+            )
+
+    # ---------------- Panggil engine yang sesuai ----------------
+
+    if engine == "claude":
+
+        history_key = CLAUDE_HISTORY_KEY
+
+        history = request.session.get(history_key, [])
+
+        reply, updated_history = ClaudeChatService.ask(
+            message, history,
+        )
+
+    else:
+
+        history_key = DEEPSEEK_HISTORY_KEY
+
+        history = request.session.get(history_key, [])
+
+        reply, updated_history = DeepSeekChatService.ask(
+            message, history,
+        )
+
+    # Batasi panjang history yang disimpan supaya session tidak
+    # membengkak (simpan pertukaran terakhir saja).
+    request.session[history_key] = updated_history[-20:]
+
+    request.session[SESSION_COUNT_KEY] = count + 1
+
+    request.session.modified = True
+
+    if engine == "claude":
+
+        with transaction.atomic():
+
+            usage = (
+                ChatbotUsage.objects
+                .select_for_update()
+                .get(pk=usage.pk)
+            )
+
+            usage.message_count += 1
+
+            usage.estimated_cost_usd = projected_cost
+
+            usage.save(
+                update_fields=["message_count", "estimated_cost_usd"],
+            )
+
+    return JsonResponse(
+        {
+            "reply": reply,
+            "remaining": max(0, limit - (count + 1)),
+        }
+    )

@@ -58,6 +58,11 @@ urlpatterns = [
     ),
 
     path(
+        "chatbot/",
+        include(("apps.chatbot.urls", "chatbot"), namespace="chatbot"),
+    ),
+
+    path(
         "login/",
         LoginView.as_view(
         template_name="registration/login.html"

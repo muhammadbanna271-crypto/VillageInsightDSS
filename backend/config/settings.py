@@ -29,6 +29,48 @@ SECRET_KEY = os.getenv(
     "django-insecure-change-this-secret-key"
 )
 
+# --------------------------------------------------
+# CHATBOT (Claude API)
+# --------------------------------------------------
+
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+
+CHATBOT_MODEL = os.getenv("CHATBOT_MODEL", "claude-sonnet-5")
+
+CHATBOT_MAX_MESSAGES_PER_SESSION = int(
+    os.getenv("CHATBOT_MAX_MESSAGES_PER_SESSION", "30")
+)
+
+# Lapis pengaman KEDUA di sisi aplikasi (lapis pertama & paling
+# kuat tetap monthly spend limit di console.anthropic.com).
+# Estimasi biaya per pesan pakai harga STANDAR Sonnet 5 yang
+# berlaku mulai 1 Sept 2026 ($3/$15 per juta token), bukan harga
+# promo yang sedang berjalan ($2/$10) -- supaya batasnya tetap
+# valid dan tidak perlu diubah lagi bulan depan. Angkanya juga
+# sengaja dilebihkan dari estimasi rata-rata sebagai margin aman.
+CHATBOT_MONTHLY_BUDGET_USD = float(
+    os.getenv("CHATBOT_MONTHLY_BUDGET_USD", "10")
+)
+
+CHATBOT_ESTIMATED_COST_PER_MESSAGE_USD = float(
+    os.getenv("CHATBOT_ESTIMATED_COST_PER_MESSAGE_USD", "0.01")
+)
+
+# --------------------------------------------------
+# DEEPSEEK (engine kedua, bebas akses tanpa password)
+# --------------------------------------------------
+
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
+
+DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+
+# --------------------------------------------------
+# Password gate untuk engine Claude (biar pemakaiannya
+# dibatasi manual, tidak sembarang orang bisa akses)
+# --------------------------------------------------
+
+CHATBOT_CLAUDE_PASSWORD = os.getenv("CHATBOT_CLAUDE_PASSWORD", "")
+
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.getenv(
@@ -80,6 +122,7 @@ INSTALLED_APPS = [
     "apps.analytics",
     "apps.dashboard",
     "apps.recommendation.apps.RecommendationConfig",
+    "apps.chatbot",
 
 ]
 
@@ -231,6 +274,13 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
 }
+
+
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
 
 # --------------------------------------------------
 # END
