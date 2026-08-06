@@ -7,7 +7,7 @@ Version : 1.0.0
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-
+import dj_database_url
 # --------------------------------------------------
 # BASE DIRECTORY
 # --------------------------------------------------
@@ -176,22 +176,32 @@ WSGI_APPLICATION = "config.wsgi.application"
 # DATABASE
 # --------------------------------------------------
 
-DATABASES = {
-    "default": {
-        "ENGINE": os.getenv(
-            "DB_ENGINE",
-            "django.db.backends.sqlite3"
-        ),
-        "NAME": os.getenv(
-            "DB_NAME",
-            BASE_DIR / "db.sqlite3"
-        ),
-        "USER": os.getenv("DB_USER", ""),
-        "PASSWORD": os.getenv("DB_PASSWORD", ""),
-        "HOST": os.getenv("DB_HOST", ""),
-        "PORT": os.getenv("DB_PORT", ""),
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+        )
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.getenv(
+                "DB_ENGINE",
+                "django.db.backends.sqlite3"
+            ),
+            "NAME": os.getenv(
+                "DB_NAME",
+                BASE_DIR / "db.sqlite3"
+            ),
+            "USER": os.getenv("DB_USER", ""),
+            "PASSWORD": os.getenv("DB_PASSWORD", ""),
+            "HOST": os.getenv("DB_HOST", ""),
+            "PORT": os.getenv("DB_PORT", ""),
+        }
+    }
 
 # --------------------------------------------------
 # PASSWORD VALIDATION
