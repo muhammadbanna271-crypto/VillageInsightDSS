@@ -8,13 +8,17 @@ Village List
 Village List
 {% endblock %}
 
+{% block page_subtitle %}
+Manage village master data.
+{% endblock %}
+
 {% block page_action %}
 
 <a
     href="{% url 'master:village-create' %}"
-    class="btn btn-primary">
+    class="btn btn-success rounded-3 px-4">
 
-    <i class="bi bi-plus-circle"></i>
+    <i class="bi bi-plus-circle me-2"></i>
 
     Add Village
 
@@ -24,48 +28,51 @@ Village List
 
 {% block search %}
 
-<form method="get" class="row mb-3">
+<form method="get">
 
-    <div class="col-md-4">
+    <div class="row g-3">
 
-        <input
-            type="search"
-            name="q"
-            value="{{ request.GET.q }}"
-            class="form-control"
-            placeholder="Search village...">
+        <div class="col-md-5">
+
+            <input
+                type="search"
+                name="q"
+                value="{{ request.GET.q }}"
+                class="form-control"
+                placeholder="Search village...">
+
+        </div>
+
+        <div class="col-auto">
+
+            <button
+                class="btn btn-success">
+
+                <i class="bi bi-search me-2"></i>
+
+                Search
+
+            </button>
+
+        </div>
+
+        {% if request.GET.q %}
+
+        <div class="col-auto">
+
+            <a
+                href="{% url 'master:village-list' %}"
+                class="btn btn-outline-secondary">
+
+                Reset
+
+            </a>
+
+        </div>
+
+        {% endif %}
 
     </div>
-
-    <div class="col-auto">
-
-        <button
-            type="submit"
-            class="btn btn-primary">
-
-            <i class="bi bi-search"></i>
-
-            Search
-
-        </button>
-
-    </div>
-
-    {% if request.GET.q %}
-
-    <div class="col-auto">
-
-        <a
-            href="{% url 'master:village-list' %}"
-            class="btn btn-secondary">
-
-            Reset
-
-        </a>
-
-    </div>
-
-    {% endif %}
 
 </form>
 
@@ -73,178 +80,172 @@ Village List
 
 {% block crud_content %}
 
-<table class="table table-hover table-bordered">
+<div class="table-responsive">
 
-    <thead class="table-light">
+    <table class="table align-middle">
 
-        <tr>
+        <thead>
 
-            <th width="120">Code</th>
-            <th>Name</th>
-            <th>District</th>
-            <th>Cluster</th>
-            <th>Status</th>
-            <th width="220">Action</th>
+            <tr>
 
-        </tr>
+                <th>Code</th>
+                <th>Village</th>
+                <th>District</th>
+                <th>Cluster</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
 
-    </thead>
+            </tr>
 
-    <tbody>
+        </thead>
 
-        {% for village in villages %}
+        <tbody>
 
-        <tr>
+            {% for village in villages %}
 
-            <td>{{ village.code }}</td>
+            <tr>
 
-            <td>{{ village.name }}</td>
+                <td>{{ village.code }}</td>
 
-            <td>{{ village.district.name }}</td>
+                <td class="fw-semibold">
 
-            <td>{{ village.cluster.name|default:"-" }}</td>
+                    {{ village.name }}
 
-            <td>
+                </td>
 
-                {% if village.is_active %}
+                <td>{{ village.district.name }}</td>
 
-                    <span class="badge bg-success">
+                <td>{{ village.cluster.name|default:"-" }}</td>
 
-                        Active
+                <td>
 
-                    </span>
+                    {% if village.is_active %}
 
-                {% else %}
+                        <span class="badge bg-success">
 
-                    <span class="badge bg-danger">
+                            Active
 
-                        Inactive
+                        </span>
 
-                    </span>
+                    {% else %}
 
-                {% endif %}
+                        <span class="badge bg-danger">
 
-            </td>
+                            Inactive
 
-            <td>
+                        </span>
 
-                <a
-                    href="{% url 'master:village-detail' village.pk %}"
-                    class="btn btn-info btn-sm">
+                    {% endif %}
 
-                    Detail
+                </td>
 
-                </a>
+                <td class="text-center">
 
-                <a
-                    href="{% url 'master:village-update' village.pk %}"
-                    class="btn btn-warning btn-sm">
+                    <a
+                        href="{% url 'master:village-detail' village.pk %}"
+                        class="btn btn-outline-primary btn-sm">
 
-                    Edit
+                        <i class="bi bi-eye"></i>
 
-                </a>
+                    </a>
 
-                <a
-                    href="{% url 'master:village-delete' village.pk %}"
-                    class="btn btn-danger btn-sm">
+                    <a
+                        href="{% url 'master:village-update' village.pk %}"
+                        class="btn btn-outline-warning btn-sm">
 
-                    Delete
+                        <i class="bi bi-pencil"></i>
 
-                </a>
+                    </a>
 
-            </td>
+                    <a
+                        href="{% url 'master:village-delete' village.pk %}"
+                        class="btn btn-outline-danger btn-sm">
 
-        </tr>
+                        <i class="bi bi-trash"></i>
 
-        {% empty %}
+                    </a>
 
-        <tr>
+                </td>
 
-            <td colspan="6" class="text-center">
+            </tr>
 
-                No Village Available
+            {% empty %}
 
-            </td>
+            <tr>
 
-        </tr>
+                <td
+                    colspan="6"
+                    class="text-center py-5">
 
-        {% endfor %}
+                    No village data available.
 
-    </tbody>
+                </td>
 
-</table>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
 
 {% if is_paginated %}
 
-<nav>
+<nav class="mt-4">
 
-<ul class="pagination justify-content-center">
+    <ul class="pagination justify-content-end">
 
-{% if page_obj.has_previous %}
+        {% if page_obj.has_previous %}
 
-<li class="page-item">
+        <li class="page-item">
 
-<a
-class="page-link"
-href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+            <a
+                class="page-link"
+                href="?page={{ page_obj.previous_page_number }}">
 
-Previous
+                Previous
 
-</a>
+            </a>
 
-</li>
+        </li>
 
-{% endif %}
+        {% endif %}
 
-{% for i in paginator.page_range %}
+        {% for i in paginator.page_range %}
 
-{% if page_obj.number == i %}
+        <li class="page-item {% if page_obj.number == i %}active{% endif %}">
 
-<li class="page-item active">
+            <a
+                class="page-link"
+                href="?page={{ i }}">
 
-<span class="page-link">
+                {{ i }}
 
-{{ i }}
+            </a>
 
-</span>
+        </li>
 
-</li>
+        {% endfor %}
 
-{% else %}
+        {% if page_obj.has_next %}
 
-<li class="page-item">
+        <li class="page-item">
 
-<a
-class="page-link"
-href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+            <a
+                class="page-link"
+                href="?page={{ page_obj.next_page_number }}">
 
-{{ i }}
+                Next
 
-</a>
+            </a>
 
-</li>
+        </li>
 
-{% endif %}
+        {% endif %}
 
-{% endfor %}
-
-{% if page_obj.has_next %}
-
-<li class="page-item">
-
-<a
-class="page-link"
-href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
-
-Next
-
-</a>
-
-</li>
-
-{% endif %}
-
-</ul>
+    </ul>
 
 </nav>
 

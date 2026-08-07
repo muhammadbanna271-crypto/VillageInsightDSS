@@ -29,7 +29,6 @@ def analytics_dashboard(request):
         "likert_distribution": AnalyticsService.likert_distribution(),
 
         "indicator_scores": AnalyticsService.indicator_scores(),
-
     }
 
     return render(

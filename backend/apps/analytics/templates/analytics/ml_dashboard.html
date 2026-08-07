@@ -301,41 +301,143 @@ new Chart(document.getElementById("importanceChart"), {
 
 const scatterByCluster = {};
 
-scatterData.forEach(point => {
+const clusterColors = {
+    "Berkembang": "#dc3545",
+    "Sedang": "#ffc107",
+    "Unggul": "#198754",
+
+    // fallback kalau nama cluster masih default
+    "Cluster 0": "#dc3545",
+    "Cluster 1": "#ffc107",
+    "Cluster 2": "#198754",
+};
+
+scatterData.forEach((point) => {
 
     if (!scatterByCluster[point.cluster]) {
 
         scatterByCluster[point.cluster] = {
-            label: point.cluster,
-            data: [],
-            backgroundColor: point.color,
-        };
 
+            label: point.cluster,
+
+            data: [],
+
+            backgroundColor:
+                point.cluster.includes("Berkembang")
+                    ? "#dc3545"
+                    : point.cluster.includes("Sedang")
+                    ? "#ffc107"
+                    : point.cluster.includes("Unggul")
+                    ? "#198754"
+                    : "#0d6efd",
+
+            borderColor:
+                point.cluster.includes("Berkembang")
+                    ? "#dc3545"
+                    : point.cluster.includes("Sedang")
+                    ? "#ffc107"
+                    : point.cluster.includes("Unggul")
+                    ? "#198754"
+                    : "#0d6efd",
+
+            pointRadius: 6,
+
+            pointHoverRadius: 8,
+
+        };
     }
 
     scatterByCluster[point.cluster].data.push({
+
         x: point.x,
+
         y: point.y,
+
         village: point.village,
+
     });
 
 });
 
-new Chart(document.getElementById("scatterChart"), {
-    type: "scatter",
-    data: {
-        datasets: Object.values(scatterByCluster),
-    },
-    options: {
-        plugins: {
-            tooltip: {
-                callbacks: {
-                    label: (ctx) => ctx.raw.village,
-                },
-            },
+new Chart(
+
+    document.getElementById("scatterChart"),
+
+    {
+
+        type: "scatter",
+
+        data: {
+
+            datasets: Object.values(scatterByCluster),
+
         },
-    },
-});
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+
+                    position: "top",
+
+                },
+
+                tooltip: {
+
+                    callbacks: {
+
+                        label: (ctx) => {
+
+                            return (
+                                ctx.dataset.label +
+                                " - " +
+                                ctx.raw.village
+                            );
+
+                        },
+
+                    },
+
+                },
+
+            },
+
+            scales: {
+
+                x: {
+
+                    title: {
+
+                        display: true,
+
+                        text: "Principal Component 1",
+
+                    },
+
+                },
+
+                y: {
+
+                    title: {
+
+                        display: true,
+
+                        text: "Principal Component 2",
+
+                    },
+
+                },
+
+            },
+
+        },
+
+    }
+
+);
 
 // ================= Radar Chart =================
 

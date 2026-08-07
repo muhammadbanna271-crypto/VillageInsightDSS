@@ -2,23 +2,19 @@
 
 {% block crud_content %}
 
-<div class="card shadow-sm border-0">
+<form method="post">
 
-    <div class="card-body">
+    {% csrf_token %}
 
-        <form method="post">
+    <div class="row g-4">
 
-            {% csrf_token %}
+        {% for field in form %}
 
-            <div class="row">
+            {% if field.name != "nik" and field.name != "latitude" and field.name != "longitude" %}
 
-                {% for field in form %}
+                <div class="col-md-6">
 
-                {% if field.name != "nik" and field.name != "latitude" and field.name != "longitude" %}
-
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label fw-semibold">
+                    <label class="form-label fw-semibold mb-2">
 
                         {{ field.label }}
 
@@ -28,7 +24,7 @@
 
                     {% if field.help_text %}
 
-                        <small class="text-muted d-block">
+                        <small class="text-muted d-block mt-2">
 
                             {{ field.help_text }}
 
@@ -38,7 +34,7 @@
 
                     {% for error in field.errors %}
 
-                        <div class="text-danger small mt-1">
+                        <div class="text-danger small mt-2">
 
                             {{ error }}
 
@@ -48,38 +44,36 @@
 
                 </div>
 
-                {% endif %}
+            {% endif %}
 
-                {% endfor %}
-
-            </div>
-
-            <hr>
-
-            <div class="d-flex justify-content-end gap-2">
-
-                <a
-                    href="javascript:history.back()"
-                    class="btn btn-secondary">
-
-                    Cancel
-
-                </a>
-
-                <button
-                    type="submit"
-                    class="btn btn-success">
-
-                    Save
-
-                </button>
-
-            </div>
-
-        </form>
+        {% endfor %}
 
     </div>
 
-</div>
+    <div class="border-top mt-5 pt-4 d-flex justify-content-end gap-2">
+
+        <a
+            href="javascript:history.back()"
+            class="btn btn-outline-secondary rounded-3 px-4">
+
+            <i class="bi bi-arrow-left me-2"></i>
+
+            Cancel
+
+        </a>
+
+        <button
+            type="submit"
+            class="btn btn-success rounded-3 px-4">
+
+            <i class="bi bi-check-circle me-2"></i>
+
+            Save
+
+        </button>
+
+    </div>
+
+</form>
 
 {% endblock %}

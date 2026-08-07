@@ -1,36 +1,47 @@
-<div class="d-flex flex-column bg-dark text-white"
-     style="
-        width:260px;
-        height:100vh;
-        position:fixed;
-        left:0;
-        top:0;
-     ">
+{% url 'dashboard:dashboard' as dashboard_url %}
+{% url 'master:district-list' as district_url %}
+{% url 'master:village-list' as village_url %}
+{% url 'master:cluster-list' as cluster_url %}
+{% url 'master:variable-list' as variable_url %}
+{% url 'master:indicator-list' as indicator_url %}
+{% url 'master:questionnaire-list' as questionnaire_url %}
+{% url 'survey:survey-list' as survey_url %}
+{% url 'survey:survey-village-list' as survey_village_url %}
+{% url 'respondent:respondent-list' as respondent_url %}
+{% url 'response:response-list' as response_url %}
+{% url 'analytics:dashboard' as analytics_url %}
+{% url 'recommendation:dashboard' as recommendation_url %}
+{% url 'chatbot:chat-page' as chatbot_url %}
+{% load static %}
+<div class="sidebar">
 
-    <!-- Header -->
-    <div class="p-3 border-bottom border-secondary">
+    <div class="sidebar-header">
 
-        <h4 class="text-center m-0">
+        <h4>
 
             VillageInsight DSS
 
         </h4>
 
+        <small>
+
+            Smart Tourism Village
+
+        </small>
+
     </div>
 
-    <!-- Menu -->
-    <div class="flex-grow-1 overflow-auto p-3">
+    <div class="sidebar-menu">
 
-        <ul class="nav nav-pills flex-column">
+        <ul class="nav flex-column">
 
-            <!-- ================= Dashboard ================= -->
+            <li>
 
-            <li class="nav-item mb-2">
+                <a
+                    href="{{ dashboard_url }}"
+                    class="nav-link {% if request.path == dashboard_url %}active{% endif %}">
 
-                <a href="{% url 'dashboard:dashboard' %}"
-                   class="nav-link text-white">
-
-                    <i class="bi bi-speedometer2 me-2"></i>
+                    <i class="bi bi-speedometer2"></i>
 
                     Dashboard
 
@@ -38,9 +49,7 @@
 
             </li>
 
-            <!-- ================= Master Data ================= -->
-
-            <li class="mt-3 mb-2 text-secondary">
+            <li class="menu-title">
 
                 MASTER DATA
 
@@ -48,10 +57,11 @@
 
             <li>
 
-                <a href="{% url 'master:district-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ district_url }}"
+                    class="nav-link {% if district_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-map me-2"></i>
+                    <i class="bi bi-map"></i>
 
                     District
 
@@ -61,10 +71,11 @@
 
             <li>
 
-                <a href="{% url 'master:village-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ village_url }}"
+                    class="nav-link {% if village_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-geo-alt me-2"></i>
+                    <i class="bi bi-geo-alt"></i>
 
                     Village
 
@@ -74,10 +85,11 @@
 
             <li>
 
-                <a href="{% url 'master:cluster-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ cluster_url }}"
+                    class="nav-link {% if cluster_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-diagram-3 me-2"></i>
+                    <i class="bi bi-diagram-3"></i>
 
                     Cluster
 
@@ -87,10 +99,11 @@
 
             <li>
 
-                <a href="{% url 'master:variable-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ variable_url }}"
+                    class="nav-link {% if variable_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-boxes me-2"></i>
+                    <i class="bi bi-boxes"></i>
 
                     Variable
 
@@ -100,10 +113,11 @@
 
             <li>
 
-                <a href="{% url 'master:indicator-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ indicator_url }}"
+                    class="nav-link {% if indicator_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-bar-chart-line me-2"></i>
+                    <i class="bi bi-bar-chart-line"></i>
 
                     Indicator
 
@@ -113,10 +127,11 @@
 
             <li>
 
-                <a href="{% url 'master:questionnaire-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ questionnaire_url }}"
+                    class="nav-link {% if questionnaire_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-ui-checks-grid me-2"></i>
+                    <i class="bi bi-ui-checks-grid"></i>
 
                     Questionnaire
 
@@ -124,9 +139,7 @@
 
             </li>
 
-            <!-- ================= Survey ================= -->
-
-            <li class="mt-3 mb-2 text-secondary">
+            <li class="menu-title">
 
                 SURVEY
 
@@ -134,10 +147,11 @@
 
             <li>
 
-                <a href="{% url 'survey:survey-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ survey_url }}"
+                    class="nav-link {% if survey_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-clipboard-data me-2"></i>
+                    <i class="bi bi-clipboard-data"></i>
 
                     Survey
 
@@ -147,10 +161,11 @@
 
             <li>
 
-                <a href="{% url 'survey:survey-village-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ survey_village_url }}"
+                    class="nav-link {% if survey_village_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-pin-map me-2"></i>
+                    <i class="bi bi-pin-map"></i>
 
                     Survey Village
 
@@ -160,10 +175,11 @@
 
             <li>
 
-                <a href="{% url 'respondent:respondent-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ respondent_url }}"
+                    class="nav-link {% if respondent_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-people me-2"></i>
+                    <i class="bi bi-people"></i>
 
                     Respondent
 
@@ -173,10 +189,11 @@
 
             <li>
 
-                <a href="{% url 'response:response-list' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ response_url }}"
+                    class="nav-link {% if response_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-clipboard-check me-2"></i>
+                    <i class="bi bi-clipboard-check"></i>
 
                     Response
 
@@ -184,9 +201,7 @@
 
             </li>
 
-            <!-- ================= Analytics ================= -->
-
-            <li class="mt-3 mb-2 text-secondary">
+            <li class="menu-title">
 
                 ANALYTICS
 
@@ -194,10 +209,11 @@
 
             <li>
 
-                <a href="{% url 'analytics:dashboard' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ analytics_url }}"
+                    class="nav-link {% if analytics_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-graph-up-arrow me-2"></i>
+                    <i class="bi bi-graph-up-arrow"></i>
 
                     Analytics
 
@@ -207,10 +223,11 @@
 
             <li>
 
-                <a href="{% url 'recommendation:dashboard' %}"
-                   class="nav-link text-white">
+                <a
+                    href="{{ recommendation_url }}"
+                    class="nav-link {% if recommendation_url in request.path %}active{% endif %}">
 
-                    <i class="bi bi-trophy me-2"></i>
+                    <i class="bi bi-award"></i>
 
                     Recommendation
 
@@ -218,34 +235,43 @@
 
             </li>
 
-            <li class="mt-3 mb-2 text-secondary">
-                LAINNYA
+            <li class="menu-title">
+
+                OTHERS
+
             </li>
 
             <li>
-                <a href="{% url 'chatbot:chat-page' %}" target="_blank" class="nav-link text-white">
-                <i class="bi bi-chat-heart me-2"></i>
-                Chatbot Publik
+
+                <a
+                    href="{{ chatbot_url }}"
+                    target="_blank"
+                    class="nav-link">
+
+                    <i class="bi bi-chat-heart"></i>
+
+                    PRUDENCE Chatbot
+
                 </a>
+
             </li>
+
         </ul>
 
     </div>
 
-    <!-- Logout -->
+    <div class="sidebar-footer">
 
-    <div class="p-3 border-top border-secondary">
-
-        <form method="post"
-              action="{% url 'logout' %}">
+        <form
+            method="post"
+            action="{% url 'logout' %}">
 
             {% csrf_token %}
 
             <button
-                type="submit"
-                class="btn btn-danger w-100">
+                class="btn btn-light logout-btn">
 
-                <i class="bi bi-box-arrow-right me-2"></i>
+                <i class="bi bi-box-arrow-right"></i>
 
                 Logout
 

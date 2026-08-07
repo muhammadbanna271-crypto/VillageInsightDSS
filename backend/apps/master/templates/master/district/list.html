@@ -8,126 +8,242 @@ District List
 District List
 {% endblock %}
 
+{% block page_subtitle %}
+Manage district master data.
+{% endblock %}
+
 {% block page_action %}
 
 <a
     href="{% url 'master:district-create' %}"
-    class="btn btn-primary">
+    class="btn btn-success rounded-3 px-4">
 
-    <i class="bi bi-plus-circle"></i>
+    <i class="bi bi-plus-circle me-2"></i>
 
     Add District
 
 </a>
 
 {% endblock %}
+
 {% block search %}
 
-<form method="get" class="row mb-3">
+<form method="get">
 
-    <div class="col-md-4">
+    <div class="row g-3">
 
-        <input
-            type="text"
-            name="q"
-            value="{{ request.GET.q }}"
-            class="form-control"
-            placeholder="Search...">
+        <div class="col-md-5">
 
-    </div>
+            <input
+                type="search"
+                name="q"
+                value="{{ request.GET.q }}"
+                class="form-control"
+                placeholder="Search district...">
 
-    <div class="col-auto">
+        </div>
 
-        <button
-            type="submit"
-            class="btn btn-primary">
+        <div class="col-auto">
 
-            <i class="bi bi-search"></i>
+            <button
+                type="submit"
+                class="btn btn-success">
 
-            Search
+                <i class="bi bi-search me-2"></i>
 
-        </button>
+                Search
+
+            </button>
+
+        </div>
+
+        {% if request.GET.q %}
+
+        <div class="col-auto">
+
+            <a
+                href="{% url 'master:district-list' %}"
+                class="btn btn-outline-secondary">
+
+                Reset
+
+            </a>
+
+        </div>
+
+        {% endif %}
 
     </div>
 
 </form>
 
 {% endblock %}
+
 {% block crud_content %}
 
-<table class="table table-hover table-bordered">
+<div class="table-responsive">
 
-    <thead class="table-light">
+    <table class="table align-middle">
 
-        <tr>
+        <thead>
 
-            <th width="60">No</th>
-            <th width="150">Code</th>
-            <th>Name</th>
-            <th width="220">Action</th>
+            <tr>
 
-        </tr>
+                <th>Code</th>
+                <th>District</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
 
-    </thead>
+            </tr>
 
-    <tbody>
+        </thead>
 
-        {% for district in districts %}
+        <tbody>
 
-        <tr>
+            {% for district in districts %}
 
-            <td>{{ forloop.counter }}</td>
+            <tr>
 
-            <td>{{ district.code }}</td>
+                <td>{{ district.code }}</td>
 
-            <td>{{ district.name }}</td>
+                <td class="fw-semibold">
 
-            <td>
+                    {{ district.name }}
 
-                <a
-                    href="{% url 'master:district-detail' district.pk %}"
-                    class="btn btn-info btn-sm">
+                </td>
 
-                    Detail
+                <td>
 
-                </a>
+                    {% if district.is_active %}
 
-                <a
-                    href="{% url 'master:district-update' district.pk %}"
-                    class="btn btn-warning btn-sm">
+                        <span class="badge bg-success">
 
-                    Edit
+                            Active
 
-                </a>
+                        </span>
 
-                <a
-                    href="{% url 'master:district-delete' district.pk %}"
-                    class="btn btn-danger btn-sm">
+                    {% else %}
 
-                    Delete
+                        <span class="badge bg-danger">
 
-                </a>
+                            Inactive
 
-            </td>
+                        </span>
 
-        </tr>
+                    {% endif %}
 
-        {% empty %}
+                </td>
 
-        <tr>
+                <td class="text-center">
 
-            <td colspan="4" class="text-center">
+                    <a
+                        href="{% url 'master:district-detail' district.pk %}"
+                        class="btn btn-outline-primary btn-sm">
 
-                No District Available
+                        <i class="bi bi-eye"></i>
 
-            </td>
+                    </a>
 
-        </tr>
+                    <a
+                        href="{% url 'master:district-update' district.pk %}"
+                        class="btn btn-outline-warning btn-sm">
+
+                        <i class="bi bi-pencil"></i>
+
+                    </a>
+
+                    <a
+                        href="{% url 'master:district-delete' district.pk %}"
+                        class="btn btn-outline-danger btn-sm">
+
+                        <i class="bi bi-trash"></i>
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td
+                    colspan="4"
+                    class="text-center py-5">
+
+                    No district data available.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% if is_paginated %}
+
+<nav class="mt-4">
+
+    <ul class="pagination justify-content-end">
+
+        {% if page_obj.has_previous %}
+
+        <li class="page-item">
+
+            <a
+                class="page-link"
+                href="?page={{ page_obj.previous_page_number }}">
+
+                Previous
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        {% for i in paginator.page_range %}
+
+        <li class="page-item {% if page_obj.number == i %}active{% endif %}">
+
+            <a
+                class="page-link"
+                href="?page={{ i }}">
+
+                {{ i }}
+
+            </a>
+
+        </li>
 
         {% endfor %}
 
-    </tbody>
+        {% if page_obj.has_next %}
 
-</table>
+        <li class="page-item">
+
+            <a
+                class="page-link"
+                href="?page={{ page_obj.next_page_number }}">
+
+                Next
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+
+</nav>
+
+{% endif %}
 
 {% endblock %}

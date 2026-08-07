@@ -8,53 +8,61 @@ Questionnaire Management
 Questionnaire Management
 {% endblock %}
 
+{% block page_subtitle %}
+Manage questionnaires grouped by variable.
+{% endblock %}
+
 {% block page_action %}
 {% endblock %}
 
 {% block search %}
 
-<form method="get" class="row mb-4">
+<form method="get">
 
-    <div class="col-md-5">
+    <div class="row g-3">
 
-        <input
-            type="search"
-            name="q"
-            value="{{ request.GET.q }}"
-            class="form-control"
-            placeholder="Search variable...">
+        <div class="col-md-5">
+
+            <input
+                type="search"
+                name="q"
+                value="{{ request.GET.q }}"
+                class="form-control"
+                placeholder="Search variable...">
+
+        </div>
+
+        <div class="col-auto">
+
+            <button
+                type="submit"
+                class="btn btn-success">
+
+                <i class="bi bi-search me-2"></i>
+
+                Search
+
+            </button>
+
+        </div>
+
+        {% if request.GET.q %}
+
+        <div class="col-auto">
+
+            <a
+                href="{% url 'master:questionnaire-list' %}"
+                class="btn btn-outline-secondary">
+
+                Reset
+
+            </a>
+
+        </div>
+
+        {% endif %}
 
     </div>
-
-    <div class="col-auto">
-
-        <button
-            class="btn btn-primary"
-            type="submit">
-
-            <i class="bi bi-search"></i>
-
-            Search
-
-        </button>
-
-    </div>
-
-    {% if request.GET.q %}
-
-    <div class="col-auto">
-
-        <a
-            href="{% url 'master:questionnaire-list' %}"
-            class="btn btn-secondary">
-
-            Reset
-
-        </a>
-
-    </div>
-
-    {% endif %}
 
 </form>
 
@@ -62,113 +70,87 @@ Questionnaire Management
 
 {% block crud_content %}
 
-<div class="row">
+<div class="row g-4">
 
-{% for variable in variables %}
+    {% for variable in variables %}
 
-<div class="col-lg-6 mb-4">
+    <div class="col-md-6 col-lg-4">
 
-<div class="card shadow-sm border-0 h-100">
+        <div class="card h-100">
 
-<div class="card-body">
+            <div class="card-body">
 
-<div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex justify-content-between align-items-start mb-3">
 
-<div>
+                    <div>
 
-<h4 class="fw-bold mb-1">
+                        <span class="badge bg-success">
 
-{{ variable.code }}
+                            {{ variable.code }}
 
-</h4>
+                        </span>
 
-<h5>
+                    </div>
 
-{{ variable.name }}
+                </div>
 
-</h5>
+                <h5 class="fw-bold">
 
-</div>
+                    {{ variable.name }}
 
-<span class="badge bg-primary">
+                </h5>
 
-Variable
+                <div class="mt-3">
 
-</span>
+                    <span class="badge bg-primary me-2">
 
-</div>
+                        {{ variable.indicator_count }}
+                        Indicators
 
-<hr>
+                    </span>
 
-<div class="row text-center mb-3">
+                    <span class="badge bg-warning text-dark">
 
-<div class="col">
+                        {{ variable.questionnaire_count }}
+                        Questionnaires
 
-<h3 class="fw-bold text-primary">
+                    </span>
 
-{{ variable.indicator_count }}
+                </div>
 
-</h3>
+                <div class="mt-4">
 
-<small class="text-muted">
+                    <a
+                        href={% url 'master:questionnaire-by-variable' variable_id=variable.pk %}
+                        class="btn btn-outline-success">
 
-Indicators
+                        <i class="bi bi-eye me-2"></i>
 
-</small>
+                        View Questionnaires
 
-</div>
+                    </a>
 
-<div class="col">
+                </div>
 
-<h3 class="fw-bold text-success">
+            </div>
 
-{{ variable.questionnaire_count }}
+        </div>
 
-</h3>
+    </div>
 
-<small class="text-muted">
+    {% empty %}
 
-Questionnaires
+    <div class="col-12">
 
-</small>
+        <div class="text-center py-5">
 
-</div>
+            No variable available.
 
-</div>
+        </div>
 
-<div class="d-grid">
+    </div>
 
-<a
-href="{% url 'master:questionnaire-by-variable' variable.id %}"
-class="btn btn-outline-primary">
-
-<i class="bi bi-folder2-open"></i>
-
-View Questionnaires
-
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-{% empty %}
-
-<div class="col-12">
-
-<div class="alert alert-warning text-center">
-
-No Variable Available
-
-</div>
-
-</div>
-
-{% endfor %}
+    {% endfor %}
 
 </div>
 
@@ -176,73 +158,57 @@ No Variable Available
 
 <nav class="mt-4">
 
-<ul class="pagination justify-content-center">
+    <ul class="pagination justify-content-end">
 
-{% if page_obj.has_previous %}
+        {% if page_obj.has_previous %}
 
-<li class="page-item">
+        <li class="page-item">
 
-<a
-class="page-link"
-href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+            <a
+                class="page-link"
+                href="?page={{ page_obj.previous_page_number }}">
 
-Previous
+                Previous
 
-</a>
+            </a>
 
-</li>
+        </li>
 
-{% endif %}
+        {% endif %}
 
-{% for i in paginator.page_range %}
+        {% for i in paginator.page_range %}
 
-{% if page_obj.number == i %}
+        <li class="page-item {% if page_obj.number == i %}active{% endif %}">
 
-<li class="page-item active">
+            <a
+                class="page-link"
+                href="?page={{ i }}">
 
-<span class="page-link">
+                {{ i }}
 
-{{ i }}
+            </a>
 
-</span>
+        </li>
 
-</li>
+        {% endfor %}
 
-{% else %}
+        {% if page_obj.has_next %}
 
-<li class="page-item">
+        <li class="page-item">
 
-<a
-class="page-link"
-href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+            <a
+                class="page-link"
+                href="?page={{ page_obj.next_page_number }}">
 
-{{ i }}
+                Next
 
-</a>
+            </a>
 
-</li>
+        </li>
 
-{% endif %}
+        {% endif %}
 
-{% endfor %}
-
-{% if page_obj.has_next %}
-
-<li class="page-item">
-
-<a
-class="page-link"
-href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
-
-Next
-
-</a>
-
-</li>
-
-{% endif %}
-
-</ul>
+    </ul>
 
 </nav>
 

@@ -8,13 +8,17 @@ Cluster List
 Cluster List
 {% endblock %}
 
+{% block page_subtitle %}
+Manage cluster master data.
+{% endblock %}
+
 {% block page_action %}
 
 <a
     href="{% url 'master:cluster-create' %}"
-    class="btn btn-primary">
+    class="btn btn-success rounded-3 px-4">
 
-    <i class="bi bi-plus-circle"></i>
+    <i class="bi bi-plus-circle me-2"></i>
 
     Add Cluster
 
@@ -24,30 +28,50 @@ Cluster List
 
 {% block search %}
 
-<form method="get" class="row mb-3">
+<form method="get">
 
-    <div class="col-md-4">
+    <div class="row g-3">
 
-        <input
-            type="search"
-            name="q"
-            value="{{ request.GET.q }}"
-            class="form-control"
-            placeholder="Search cluster...">
+        <div class="col-md-5">
 
-    </div>
+            <input
+                type="search"
+                name="q"
+                value="{{ request.GET.q }}"
+                class="form-control"
+                placeholder="Search cluster...">
 
-    <div class="col-auto">
+        </div>
 
-        <button
-            type="submit"
-            class="btn btn-primary">
+        <div class="col-auto">
 
-            <i class="bi bi-search"></i>
+            <button
+                type="submit"
+                class="btn btn-success">
 
-            Search
+                <i class="bi bi-search me-2"></i>
 
-        </button>
+                Search
+
+            </button>
+
+        </div>
+
+        {% if request.GET.q %}
+
+        <div class="col-auto">
+
+            <a
+                href="{% url 'master:cluster-list' %}"
+                class="btn btn-outline-secondary">
+
+                Reset
+
+            </a>
+
+        </div>
+
+        {% endif %}
 
     </div>
 
@@ -57,82 +81,92 @@ Cluster List
 
 {% block crud_content %}
 
-<table class="table table-hover table-bordered">
+<div class="table-responsive">
 
-    <thead class="table-light">
+    <table class="table align-middle">
 
-        <tr>
+        <thead>
 
-            <th width="60">No</th>
-            <th width="120">Code</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th width="220">Action</th>
+            <tr>
 
-        </tr>
+                <th>No</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th class="text-center">Action</th>
 
-    </thead>
+            </tr>
 
-    <tbody>
+        </thead>
 
-        {% for cluster in clusters %}
+        <tbody>
 
-        <tr>
+            {% for cluster in clusters %}
 
-            <td>{{ forloop.counter }}</td>
+            <tr>
 
-            <td>{{ cluster.code }}</td>
+                <td>{{ forloop.counter }}</td>
 
-            <td>{{ cluster.name }}</td>
+                <td>{{ cluster.code }}</td>
 
-            <td>{{ cluster.description|default:"-" }}</td>
+                <td class="fw-semibold">
 
-            <td>
+                    {{ cluster.name }}
 
-                <a
-                    href="{% url 'master:cluster-detail' cluster.pk %}"
-                    class="btn btn-info btn-sm">
+                </td>
 
-                    Detail
+                <td>{{ cluster.description|default:"-" }}</td>
 
-                </a>
+                <td class="text-center">
 
-                <a
-                    href="{% url 'master:cluster-update' cluster.pk %}"
-                    class="btn btn-warning btn-sm">
+                    <a
+                        href="{% url 'master:cluster-detail' cluster.pk %}"
+                        class="btn btn-outline-primary btn-sm">
 
-                    Edit
+                        <i class="bi bi-eye"></i>
 
-                </a>
+                    </a>
 
-                <a
-                    href="{% url 'master:cluster-delete' cluster.pk %}"
-                    class="btn btn-danger btn-sm">
+                    <a
+                        href="{% url 'master:cluster-update' cluster.pk %}"
+                        class="btn btn-outline-warning btn-sm">
 
-                    Delete
+                        <i class="bi bi-pencil"></i>
 
-                </a>
+                    </a>
 
-            </td>
+                    <a
+                        href="{% url 'master:cluster-delete' cluster.pk %}"
+                        class="btn btn-outline-danger btn-sm">
 
-        </tr>
+                        <i class="bi bi-trash"></i>
 
-        {% empty %}
+                    </a>
 
-        <tr>
+                </td>
 
-            <td colspan="5" class="text-center">
+            </tr>
 
-                No Cluster Available
+            {% empty %}
 
-            </td>
+            <tr>
 
-        </tr>
+                <td
+                    colspan="5"
+                    class="text-center py-5">
 
-        {% endfor %}
+                    No cluster data available.
 
-    </tbody>
+                </td>
 
-</table>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
 
 {% endblock %}

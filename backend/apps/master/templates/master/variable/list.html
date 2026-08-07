@@ -8,13 +8,17 @@ Variable List
 Variable List
 {% endblock %}
 
+{% block page_subtitle %}
+Manage variable master data.
+{% endblock %}
+
 {% block page_action %}
 
 <a
     href="{% url 'master:variable-create' %}"
-    class="btn btn-primary">
+    class="btn btn-success rounded-3 px-4">
 
-    <i class="bi bi-plus-circle"></i>
+    <i class="bi bi-plus-circle me-2"></i>
 
     Add Variable
 
@@ -24,30 +28,50 @@ Variable List
 
 {% block search %}
 
-<form method="get" class="row mb-3">
+<form method="get">
 
-    <div class="col-md-4">
+    <div class="row g-3">
 
-        <input
-            type="search"
-            name="q"
-            value="{{ request.GET.q }}"
-            class="form-control"
-            placeholder="Search variable...">
+        <div class="col-md-5">
 
-    </div>
+            <input
+                type="search"
+                name="q"
+                value="{{ request.GET.q }}"
+                class="form-control"
+                placeholder="Search variable...">
 
-    <div class="col-auto">
+        </div>
 
-        <button
-            type="submit"
-            class="btn btn-primary">
+        <div class="col-auto">
 
-            <i class="bi bi-search"></i>
+            <button
+                type="submit"
+                class="btn btn-success">
 
-            Search
+                <i class="bi bi-search me-2"></i>
 
-        </button>
+                Search
+
+            </button>
+
+        </div>
+
+        {% if request.GET.q %}
+
+        <div class="col-auto">
+
+            <a
+                href="{% url 'master:variable-list' %}"
+                class="btn btn-outline-secondary">
+
+                Reset
+
+            </a>
+
+        </div>
+
+        {% endif %}
 
     </div>
 
@@ -57,108 +81,118 @@ Variable List
 
 {% block crud_content %}
 
-<table class="table table-hover table-bordered">
+<div class="table-responsive">
 
-    <thead class="table-light">
+    <table class="table align-middle">
 
-        <tr>
+        <thead>
 
-            <th width="60">No</th>
-            <th width="120">Code</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th width="100">Weight</th>
-            <th width="100">Status</th>
-            <th width="220">Action</th>
+            <tr>
 
-        </tr>
+                <th>No</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Weight</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
 
-    </thead>
+            </tr>
 
-    <tbody>
+        </thead>
 
-        {% for variable in variables %}
+        <tbody>
 
-        <tr>
+            {% for variable in variables %}
 
-            <td>{{ forloop.counter }}</td>
+            <tr>
 
-            <td>{{ variable.code }}</td>
+                <td>{{ forloop.counter }}</td>
 
-            <td>{{ variable.name }}</td>
+                <td>{{ variable.code }}</td>
 
-            <td>{{ variable.description|default:"-" }}</td>
+                <td class="fw-semibold">
 
-            <td>{{ variable.weight }}</td>
+                    {{ variable.name }}
 
-            <td>
+                </td>
 
-                {% if variable.is_active %}
+                <td>{{ variable.description|default:"-" }}</td>
 
-                    <span class="badge bg-success">
+                <td>{{ variable.weight }}</td>
 
-                        Active
+                <td>
 
-                    </span>
+                    {% if variable.is_active %}
 
-                {% else %}
+                        <span class="badge bg-success">
 
-                    <span class="badge bg-danger">
+                            Active
 
-                        Inactive
+                        </span>
 
-                    </span>
+                    {% else %}
 
-                {% endif %}
+                        <span class="badge bg-danger">
 
-            </td>
+                            Inactive
 
-            <td>
+                        </span>
 
-                <a
-                    href="{% url 'master:variable-detail' variable.pk %}"
-                    class="btn btn-info btn-sm">
+                    {% endif %}
 
-                    Detail
+                </td>
 
-                </a>
+                <td class="text-center">
 
-                <a
-                    href="{% url 'master:variable-update' variable.pk %}"
-                    class="btn btn-warning btn-sm">
+                    <a
+                        href="{% url 'master:variable-detail' variable.pk %}"
+                        class="btn btn-outline-primary btn-sm">
 
-                    Edit
+                        <i class="bi bi-eye"></i>
 
-                </a>
+                    </a>
 
-                <a
-                    href="{% url 'master:variable-delete' variable.pk %}"
-                    class="btn btn-danger btn-sm">
+                    <a
+                        href="{% url 'master:variable-update' variable.pk %}"
+                        class="btn btn-outline-warning btn-sm">
 
-                    Delete
+                        <i class="bi bi-pencil"></i>
 
-                </a>
+                    </a>
 
-            </td>
+                    <a
+                        href="{% url 'master:variable-delete' variable.pk %}"
+                        class="btn btn-outline-danger btn-sm">
 
-        </tr>
+                        <i class="bi bi-trash"></i>
 
-        {% empty %}
+                    </a>
 
-        <tr>
+                </td>
 
-            <td colspan="7" class="text-center">
+            </tr>
 
-                No Variable Available
+            {% empty %}
 
-            </td>
+            <tr>
 
-        </tr>
+                <td
+                    colspan="7"
+                    class="text-center py-5">
 
-        {% endfor %}
+                    No variable data available.
 
-    </tbody>
+                </td>
 
-</table>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
 
 {% endblock %}
