@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from apps.master.models import (
@@ -12,6 +13,7 @@ from apps.survey.models import Survey
 from apps.response.models import Response
 
 
+@login_required
 def dashboard(request):
 
     context = {
