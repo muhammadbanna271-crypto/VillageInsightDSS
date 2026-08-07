@@ -1,23 +1,21 @@
-const btn=document.getElementById("showPassword");
+const button=document.getElementById("showPassword");
 
-const pass=document.getElementById("password");
+const input=document.querySelector("input[type=password], input[type=text][name=password]");
 
-btn.onclick=()=>{
+button.addEventListener("click",()=>{
 
-if(pass.type==="password"){
+if(input.type==="password"){
 
-pass.type="text";
+input.type="text";
 
-btn.innerHTML='<i class="fa-solid fa-eye-slash"></i>';
+button.innerHTML='<i class="fa-solid fa-eye-slash"></i>';
 
-}
+}else{
 
-else{
+input.type="password";
 
-pass.type="password";
-
-btn.innerHTML='<i class="fa-solid fa-eye"></i>';
+button.innerHTML='<i class="fa-solid fa-eye"></i>';
 
 }
 
-}
+});
