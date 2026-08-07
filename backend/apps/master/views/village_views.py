@@ -44,7 +44,7 @@ class VillageListView(BaseListView):
 
                 code_number=Cast(
 
-                    Substr("code", 2),
+                    "code",
 
                     IntegerField(),
 
