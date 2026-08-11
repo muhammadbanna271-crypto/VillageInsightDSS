@@ -294,7 +294,7 @@ STATICFILES_STORAGE = (
 )
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://villageinsightdss-production.up.railway.app",
+    "trip1.up.railway.app",
 ]
 
 if not DEBUG:
