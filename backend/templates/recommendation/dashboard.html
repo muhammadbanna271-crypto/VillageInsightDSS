@@ -1,5 +1,7 @@
 {% extends "base/layout.html" %}
 
+{% load static %}
+
 {% block title %}
 Recommendation
 {% endblock %}
@@ -8,6 +10,9 @@ Recommendation
 
 <div class="dashboard-banner position-relative mb-4">
 
+    <img
+        src="{% static 'images/dashboard-banner.svg' %}"
+        alt="Recommendation">
 
     <div class="banner-content">
 
