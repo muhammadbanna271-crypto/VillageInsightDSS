@@ -276,9 +276,20 @@ new Chart(document.getElementById("pieChart"), {
         datasets: [{
             data: clusterDistribution.map(item => item.count),
             backgroundColor: clusterDistribution.map(item => item.color),
+            borderColor: "#ffffff",
+            borderWidth: 2,
         }],
     },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: "top",
+            },
+        },
+    },
 });
+
 
 // ================= Feature Importance Bar Chart =================
 
@@ -289,11 +300,28 @@ new Chart(document.getElementById("importanceChart"), {
         datasets: [{
             label: "Kontribusi (%)",
             data: variableImportance.map(item => item.percentage),
-            backgroundColor: "#0d6efd",
+            backgroundColor: "#198754",
+            borderColor: "#146c43",
+            borderWidth: 1,
         }],
     },
     options: {
         indexAxis: "y",
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false,
+            },
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: "Kontribusi (%)",
+                },
+            },
+        },
     },
 });
 
@@ -302,19 +330,26 @@ new Chart(document.getElementById("importanceChart"), {
 const scatterByCluster = {};
 
 const clusterColors = {
-    "Berkembang": "#dc3545",
-    "Sedang": "#ffc107",
+    "Berkembang": "#0d6efd",
+    "Sedang": "#fd7e14",
     "Unggul": "#198754",
 
-    // fallback kalau nama cluster masih default
-    "Cluster 0": "#dc3545",
-    "Cluster 1": "#ffc107",
+    // fallback jika nama cluster masih default
+    "Cluster 0": "#0d6efd",
+    "Cluster 1": "#fd7e14",
     "Cluster 2": "#198754",
+
+    "Belum Dikluster": "#6c757d",
 };
 
 scatterData.forEach((point) => {
 
     if (!scatterByCluster[point.cluster]) {
+
+        const color =
+            point.color ||
+            clusterColors[point.cluster] ||
+            "#6c757d";
 
         scatterByCluster[point.cluster] = {
 
@@ -322,23 +357,9 @@ scatterData.forEach((point) => {
 
             data: [],
 
-            backgroundColor:
-                point.cluster.includes("Berkembang")
-                    ? "#dc3545"
-                    : point.cluster.includes("Sedang")
-                    ? "#ffc107"
-                    : point.cluster.includes("Unggul")
-                    ? "#198754"
-                    : "#0d6efd",
+            backgroundColor: color,
 
-            borderColor:
-                point.cluster.includes("Berkembang")
-                    ? "#dc3545"
-                    : point.cluster.includes("Sedang")
-                    ? "#ffc107"
-                    : point.cluster.includes("Unggul")
-                    ? "#198754"
-                    : "#0d6efd",
+            borderColor: color,
 
             pointRadius: 6,
 
@@ -360,17 +381,12 @@ scatterData.forEach((point) => {
 });
 
 new Chart(
-
     document.getElementById("scatterChart"),
-
     {
-
         type: "scatter",
 
         data: {
-
             datasets: Object.values(scatterByCluster),
-
         },
 
         options: {
@@ -380,9 +396,8 @@ new Chart(
             plugins: {
 
                 legend: {
-
                     position: "top",
-
+                    display: true,
                 },
 
                 tooltip: {
@@ -436,7 +451,6 @@ new Chart(
         },
 
     }
-
 );
 
 // ================= Radar Chart =================
@@ -462,8 +476,8 @@ function loadRadarChart(villageId) {
                         datasets: [{
                             label: data.village,
                             data: data.values,
-                            backgroundColor: "rgba(13, 110, 253, 0.25)",
-                            borderColor: "#0d6efd",
+                            backgroundColor: "rgba(25, 135, 84, 0.20)",
+                            borderColor: "#198754",
                         }],
                     },
                     options: {
