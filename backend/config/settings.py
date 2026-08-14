@@ -71,7 +71,11 @@ DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 
 CHATBOT_CLAUDE_PASSWORD = os.getenv("CHATBOT_CLAUDE_PASSWORD", "")
 
-DEBUG = os.getenv("DEBUG", "True") == "True"
+# FIXED: default DEBUG diubah ke "False". Kalau env var DEBUG lupa
+# di-set di Railway (production), app tidak akan otomatis jalan
+# dalam mode debug yang berbahaya (bisa expose info sensitif).
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
 RAILWAY_HOST = os.getenv("RAILWAY_PUBLIC_DOMAIN")
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
@@ -293,9 +297,14 @@ STATICFILES_STORAGE = (
     "whitenoise.storage.CompressedManifestStaticFilesStorage"
 )
 
+# FIXED: CSRF_TRUSTED_ORIGINS sekarang otomatis mengikuti domain
+# aktif dari Railway (RAILWAY_PUBLIC_DOMAIN) dan sudah memakai
+# skema "https://" sesuai yang diwajibkan Django. Kalau nama
+# domain di Railway diganti-ganti, baris ini tidak perlu diedit
+# manual lagi.
 CSRF_TRUSTED_ORIGINS = [
-    "trip1.up.railway.app",
-]
+    f"https://{RAILWAY_HOST}",
+] if RAILWAY_HOST else []
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
