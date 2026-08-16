@@ -1,7 +1,7 @@
 # PROJECT BIBLE
 
-> VillageInsight DSS
-> Adaptive Decision Support System for Tourism Village Development
+> TRIP
+> Tourism Resource Integration Platform
 
 Version : 0.1.0
 
@@ -13,7 +13,7 @@ Status : Active Development
 
 Project Name
 
-VillageInsight DSS
+TRIP
 
 Full Name
 

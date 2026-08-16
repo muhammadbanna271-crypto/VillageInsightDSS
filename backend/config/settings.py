@@ -297,11 +297,14 @@ STATICFILES_STORAGE = (
     "whitenoise.storage.CompressedManifestStaticFilesStorage"
 )
 
-# FIXED: CSRF_TRUSTED_ORIGINS sekarang otomatis mengikuti domain
-# aktif dari Railway (RAILWAY_PUBLIC_DOMAIN) dan sudah memakai
-# skema "https://" sesuai yang diwajibkan Django. Kalau nama
-# domain di Railway diganti-ganti, baris ini tidak perlu diedit
-# manual lagi.
+# FIXED (merge conflict resolved): CSRF_TRUSTED_ORIGINS otomatis
+# mengikuti domain aktif dari Railway (RAILWAY_PUBLIC_DOMAIN),
+# sudah memakai skema "https://" sesuai yang diwajibkan Django.
+# Ini otomatis menghasilkan
+# "https://villageinsightdss-production.up.railway.app" saat
+# deploy ke environment production tersebut, jadi kalau nama
+# domain di Railway diganti-ganti lagi, baris ini tidak perlu
+# diedit manual.
 CSRF_TRUSTED_ORIGINS = [
     f"https://{RAILWAY_HOST}",
 ] if RAILWAY_HOST else []

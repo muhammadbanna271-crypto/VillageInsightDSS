@@ -15,12 +15,13 @@ Manage district master data.
 {% block page_action %}
 
 <a
-    href="{% url 'master:district-create' %}"
-    class="btn btn-success rounded-3 px-4">
+ href="{% url 'master:district-create' %}"
+ class="btn btn-success rounded-3 px-4">
 
-    <i class="bi bi-plus-circle me-2"></i>
+<i class="bi bi-plus-circle me-2"></i>
 
-    Add District
+
+Add District
 
 </a>
 
@@ -30,50 +31,67 @@ Manage district master data.
 
 <form method="get">
 
-    <div class="row g-3">
+<div class="row g-3">
 
-        <div class="col-md-5">
 
-            <input
-                type="search"
-                name="q"
-                value="{{ request.GET.q }}"
-                class="form-control"
-                placeholder="Search district...">
+    <div class="col-md-5">
 
-        </div>
 
-        <div class="col-auto">
+        <input
+            type="search"
+            name="q"
+            value="{{ request.GET.q }}"
+            class="form-control"
+            placeholder="Search district...">
 
-            <button
-                type="submit"
-                class="btn btn-success">
-
-                <i class="bi bi-search me-2"></i>
-
-                Search
-
-            </button>
-
-        </div>
-
-        {% if request.GET.q %}
-
-        <div class="col-auto">
-
-            <a
-                href="{% url 'master:district-list' %}"
-                class="btn btn-outline-secondary">
-
-                Reset
-
-            </a>
-
-        </div>
-
-        {% endif %}
 
     </div>
+
+
+    <div class="col-auto">
+
+
+        <button
+            type="submit"
+            class="btn btn-success">
+
+
+            <i class="bi bi-search me-2"></i>
+
+
+            Search
+
+
+        </button>
+
+
+    </div>
+
+
+    {% if request.GET.q %}
+
+
+    <div class="col-auto">
+
+
+        <a
+            href="{% url 'master:district-list' %}"
+            class="btn btn-outline-secondary">
+
+
+            Reset
+
+
+        </a>
+
+
+    </div>
+
+
+    {% endif %}
+
+
+</div>
 
 </form>
 
@@ -83,106 +101,132 @@ Manage district master data.
 
 <div class="table-responsive">
 
-    <table class="table align-middle">
+<table class="table align-middle">
 
-        <thead>
 
-            <tr>
+    <thead>
 
-                <th>Code</th>
-                <th>District</th>
-                <th>Status</th>
-                <th class="text-center">Action</th>
 
-            </tr>
+        <tr>
 
-        </thead>
 
-        <tbody>
+            <th>Code</th>
+            <th>District</th>
+            <th>Status</th>
+            <th class="text-center">Action</th>
 
-            {% for district in districts %}
 
-            <tr>
+        </tr>
 
-                <td>{{ district.code }}</td>
 
-                <td class="fw-semibold">
+    </thead>
 
-                    {{ district.name }}
 
-                </td>
+    <tbody>
 
-                <td>
 
-                    {% if district.is_active %}
+        {% for district in districts %}
 
-                        <span class="badge bg-success">
 
-                            Active
+        <tr>
 
-                        </span>
 
-                    {% else %}
+            <td>{{ district.code }}</td>
 
-                        <span class="badge bg-danger">
 
-                            Inactive
+            <td class="fw-semibold">
 
-                        </span>
 
-                    {% endif %}
+                {{ district.name }}
 
-                </td>
 
-                <td class="text-center">
+            </td>
 
-                    <a
-                        href="{% url 'master:district-detail' district.pk %}"
-                        class="btn btn-outline-primary btn-sm">
 
-                        <i class="bi bi-eye"></i>
+            <td>
 
-                    </a>
 
-                    <a
-                        href="{% url 'master:district-update' district.pk %}"
-                        class="btn btn-outline-warning btn-sm">
+                <span class="badge bg-success">
 
-                        <i class="bi bi-pencil"></i>
 
-                    </a>
+                    Active
 
-                    <a
-                        href="{% url 'master:district-delete' district.pk %}"
-                        class="btn btn-outline-danger btn-sm">
 
-                        <i class="bi bi-trash"></i>
+                </span>
 
-                    </a>
 
-                </td>
+            </td>
 
-            </tr>
 
-            {% empty %}
+            <td class="text-center">
 
-            <tr>
 
-                <td
-                    colspan="4"
-                    class="text-center py-5">
+                <a
+                    href="{% url 'master:district-detail' district.pk %}"
+                    class="btn btn-outline-primary btn-sm">
 
-                    No district data available.
 
-                </td>
+                    <i class="bi bi-eye"></i>
 
-            </tr>
 
-            {% endfor %}
+                </a>
 
-        </tbody>
 
-    </table>
+                <a
+                    href="{% url 'master:district-update' district.pk %}"
+                    class="btn btn-outline-warning btn-sm">
+
+
+                    <i class="bi bi-pencil"></i>
+
+
+                </a>
+
+
+                <a
+                    href="{% url 'master:district-delete' district.pk %}"
+                    class="btn btn-outline-danger btn-sm">
+
+
+                    <i class="bi bi-trash"></i>
+
+
+                </a>
+
+
+            </td>
+
+
+        </tr>
+
+
+        {% empty %}
+
+
+        <tr>
+
+
+            <td
+                colspan="4"
+                class="text-center py-5">
+
+
+                No district data available.
+
+
+            </td>
+
+
+        </tr>
+
+
+        {% endfor %}
+
+
+    </tbody>
+
+
+</table>
 
 </div>
 
@@ -190,57 +234,79 @@ Manage district master data.
 
 <nav class="mt-4">
 
-    <ul class="pagination justify-content-end">
+<ul class="pagination justify-content-end">
 
-        {% if page_obj.has_previous %}
 
-        <li class="page-item">
+    {% if page_obj.has_previous %}
 
-            <a
-                class="page-link"
-                href="?page={{ page_obj.previous_page_number }}">
 
-                Previous
+    <li class="page-item">
 
-            </a>
 
-        </li>
+        <a
+            class="page-link"
+            href="?page={{ page_obj.previous_page_number }}">
 
-        {% endif %}
 
-        {% for i in paginator.page_range %}
+            Previous
 
-        <li class="page-item {% if page_obj.number == i %}active{% endif %}">
 
-            <a
-                class="page-link"
-                href="?page={{ i }}">
+        </a>
 
-                {{ i }}
 
-            </a>
+    </li>
 
-        </li>
 
-        {% endfor %}
+    {% endif %}
 
-        {% if page_obj.has_next %}
 
-        <li class="page-item">
+    {% for i in paginator.page_range %}
 
-            <a
-                class="page-link"
-                href="?page={{ page_obj.next_page_number }}">
 
-                Next
+    <li class="page-item {% if page_obj.number == i %}active{% endif %}">
 
-            </a>
 
-        </li>
+        <a
+            class="page-link"
+            href="?page={{ i }}">
 
-        {% endif %}
 
-    </ul>
+            {{ i }}
+
+
+        </a>
+
+
+    </li>
+
+
+    {% endfor %}
+
+
+    {% if page_obj.has_next %}
+
+
+    <li class="page-item">
+
+
+        <a
+            class="page-link"
+            href="?page={{ page_obj.next_page_number }}">
+
+
+            Next
+
+
+        </a>
+
+
+    </li>
+
+
+    {% endif %}
+
+
+</ul>
 
 </nav>
 
