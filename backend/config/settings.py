@@ -84,6 +84,17 @@ ALLOWED_HOSTS = os.getenv(
 
 if RAILWAY_HOST:
     ALLOWED_HOSTS.append(RAILWAY_HOST)
+
+# FIXED: tambahan wildcard ".up.railway.app". RAILWAY_PUBLIC_DOMAIN
+# cuma nunjuk ke SATU domain (biasanya yang di-generate otomatis
+# pertama kali), jadi kalau kamu tambah/rename domain lain lewat
+# tombol "Generate Domain" / edit nama subdomain (misal trip1,
+# tripdss, dst), domain baru itu TIDAK otomatis masuk ke
+# RAILWAY_PUBLIC_DOMAIN dan bakal kena error 400 "DisallowedHost".
+# Dengan wildcard ini, SEMUA subdomain *.up.railway.app yang kamu
+# buat di project Railway ini otomatis diterima, tanpa perlu edit
+# kode / env var manual tiap kali ganti nama domain.
+ALLOWED_HOSTS.append(".up.railway.app")
 # --------------------------------------------------
 # APPLICATION DEFINITION
 # --------------------------------------------------
@@ -297,17 +308,17 @@ STATICFILES_STORAGE = (
     "whitenoise.storage.CompressedManifestStaticFilesStorage"
 )
 
-# FIXED (merge conflict resolved): CSRF_TRUSTED_ORIGINS otomatis
-# mengikuti domain aktif dari Railway (RAILWAY_PUBLIC_DOMAIN),
-# sudah memakai skema "https://" sesuai yang diwajibkan Django.
-# Ini otomatis menghasilkan
-# "https://villageinsightdss-production.up.railway.app" saat
-# deploy ke environment production tersebut, jadi kalau nama
-# domain di Railway diganti-ganti lagi, baris ini tidak perlu
-# diedit manual.
+# FIXED: CSRF_TRUSTED_ORIGINS sekarang mencakup domain aktif dari
+# RAILWAY_PUBLIC_DOMAIN (kalau ada) DITAMBAH wildcard
+# "https://*.up.railway.app" -- supaya semua subdomain yang kamu
+# buat/ganti di project Railway ini (trip1, tripdss, atau nama
+# apapun nanti) otomatis dipercaya buat CSRF, tanpa perlu edit
+# manual tiap kali ganti nama domain.
 CSRF_TRUSTED_ORIGINS = [
-    f"https://{RAILWAY_HOST}",
-] if RAILWAY_HOST else []
+    "https://*.up.railway.app",
+]
+if RAILWAY_HOST:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RAILWAY_HOST}")
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
