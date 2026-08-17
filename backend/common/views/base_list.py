@@ -1,8 +1,12 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 from django.db.models import Q
 
 
-class BaseListView(ListView):
+class BaseListView(LoginRequiredMixin, ListView):
+    """
+    Semua user yang login (visitor/staff/superuser) boleh lihat.
+    """
 
     paginate_by = 10
 
@@ -27,3 +31,16 @@ class BaseListView(ListView):
             queryset = queryset.filter(query)
 
         return queryset
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        # Dikirim ke SEMUA template list -- dipakai buat
+        # nampilin/nyembunyiin tombol Add/Edit/Delete.
+        context["can_edit"] = (
+            self.request.user.is_staff
+            or self.request.user.is_superuser
+        )
+
+        return context

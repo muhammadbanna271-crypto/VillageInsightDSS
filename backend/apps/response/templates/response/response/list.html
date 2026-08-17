@@ -14,6 +14,8 @@ Response List
     <i class="bi bi-arrow-left me-1"></i> Kembali
 </button>
 
+{% if request.user.is_staff or request.user.is_superuser %}
+
 <a
     href="{% url 'response:response-import' %}"
     class="btn btn-success">
@@ -22,6 +24,8 @@ Response List
 
 </a>
 
+{% endif %}
+
 <a
     href="{% url 'response:response-create' %}"
     class="btn btn-primary">
@@ -29,6 +33,8 @@ Response List
     Add Response
 
 </a>
+
+{% if request.user.is_staff or request.user.is_superuser %}
 
 <button
     type="button"
@@ -39,6 +45,8 @@ Response List
     <i class="bi bi-trash me-1"></i> Hapus Semua
 
 </button>
+
+{% endif %}
 
 {% endblock %}
 
@@ -139,11 +147,17 @@ Response List
 
 <!-- ================= Modal Hapus Semua ================= -->
 
+{% if request.user.is_staff or request.user.is_superuser %}
+
 <div class="modal fade" id="deleteAllModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <form method="post" action="{% url 'response:response-delete-all' %}">
+            <form
+                method="post"
+                action="{% url 'response:response-delete-all' %}"
+                id="deleteAllFormResponse"
+                onsubmit="return handleDeleteAllSubmitResponse(this);">
 
                 {% csrf_token %}
 
@@ -190,6 +204,60 @@ Response List
         </div>
     </div>
 </div>
+
+<script>
+    // Mencegah form "Hapus Semua" terkirim dua kali (double-click / double-submit)
+    function handleDeleteAllSubmitResponse(form) {
+
+        const btn = document.getElementById('deleteAllSubmitResponse');
+
+        if (form.dataset.submitted === '1') {
+            return false;
+        }
+
+        form.dataset.submitted = '1';
+        btn.disabled = true;
+        btn.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Menghapus...';
+
+        return true;
+    }
+
+    // Reset state form kalau modal ditutup tanpa submit (misal klik Batal),
+    // supaya kalau modal dibuka lagi tombolnya normal kembali.
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const modal = document.getElementById('deleteAllModal');
+
+        if (modal) {
+
+            modal.addEventListener('hidden.bs.modal', function () {
+
+                const form = document.getElementById('deleteAllFormResponse');
+                const input = document.getElementById('confirmTextResponse');
+                const btn = document.getElementById('deleteAllSubmitResponse');
+
+                if (form) {
+                    form.dataset.submitted = '0';
+                }
+
+                if (input) {
+                    input.value = '';
+                }
+
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = 'Hapus Semua';
+                }
+
+            });
+
+        }
+
+    });
+</script>
+
+{% endif %}
 
 {% if is_paginated %}
 

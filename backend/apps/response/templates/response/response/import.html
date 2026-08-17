@@ -10,13 +10,14 @@ Import Data Excel (Data Historis)
 
 {% block crud_content %}
 
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert-{{ message.tags }}">
-    {{ message }}
+{% if not has_access %}
+
+<div class="alert alert-danger">
+    Anda tidak memiliki akses untuk melakukan import data Excel.
+    Fitur ini hanya tersedia untuk staff atau superuser.
 </div>
-{% endfor %}
-{% endif %}
+
+{% else %}
 
 <div class="alert alert-secondary">
 
@@ -89,5 +90,7 @@ importForm.addEventListener("submit", () => {
 });
 
 </script>
+
+{% endif %}
 
 {% endblock %}

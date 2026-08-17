@@ -267,29 +267,63 @@ def take_survey(request, respondent_id):
 
 def delete_all_response(request):
 
+    # Hanya staff dan superuser yang boleh menghapus semua response
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    if not (
+        request.user.is_staff
+        or request.user.is_superuser
+    ):
+        messages.error(
+            request,
+            "Anda tidak memiliki izin untuk menghapus semua response."
+        )
+        return redirect("response:response-list")
+
     if request.method == "POST":
 
-        confirm_text = request.POST.get("confirm_text", "")
+        confirm_text = request.POST.get(
+            "confirm_text",
+            ""
+        )
 
         if confirm_text.strip().upper() != "HAPUS":
 
             messages.error(
                 request,
                 (
-                    "Konfirmasi tidak sesuai. Ketik \"HAPUS\" "
-                    "persis untuk menghapus semua data response."
+                    'Konfirmasi tidak sesuai. Ketik "HAPUS" '
+                    'persis untuk menghapus semua data response.'
                 ),
             )
 
-            return redirect("response:response-list")
+            return redirect(
+                "response:response-list"
+            )
 
         total = Response.objects.count()
 
-        Response.objects.all().delete()
+        # Guard tambahan: kalau request kedua (mis. akibat double-submit
+        # atau race condition) sampai lolos ke sini setelah data sudah
+        # dihapus oleh request pertama, jangan tampilkan pesan sukses
+        # "0 data" yang membingungkan seolah-olah ada dua proses hapus.
+        if total == 0:
 
-        messages.success(
-            request,
-            f"{total} data response berhasil dihapus semua.",
-        )
+            messages.info(
+                request,
+                "Tidak ada data response untuk dihapus.",
+            )
 
-    return redirect("response:response-list")
+        else:
+
+            Response.objects.all().delete()
+
+            messages.success(
+                request,
+                f"{total} data response berhasil dihapus semua.",
+            )
+
+    return redirect(
+        "response:response-list"
+    )
