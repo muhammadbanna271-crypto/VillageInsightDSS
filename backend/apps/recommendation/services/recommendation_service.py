@@ -1,3 +1,9 @@
+"""
+Replace SELURUH isi apps/recommendation/services/recommendation_service.py
+dengan file ini (lengkap, tidak perlu digabung manual lagi).
+"""
+
+from apps.recommendation.models import RecommendationResult
 from apps.recommendation.selectors.recommendation_selector import (
     RecommendationSelector,
 )
@@ -160,51 +166,76 @@ class RecommendationService:
 
         return data["ranking"]
 
+    # =========================================================
+    # CACHING -- recalculate() menghitung ulang (berat, manual
+    # trigger saja), dashboard() cuma baca cache (ringan).
+    # =========================================================
+
     @classmethod
-    def dashboard(cls):
+    def recalculate(cls):
+        """
+        Ini yang MENGHITUNG ULANG (berat). Cuma dipanggil kalau
+        ada yang klik tombol "Hitung Ulang" (superuser only) --
+        BUKAN tiap kali dashboard dibuka.
+        """
 
         data = cls._run_topsis()
 
         if data is None:
+            ranking_json = []
+            n_villages = 0
+        else:
+            ranking_json = [
+                {
+                    "village_id": item["village"].id,
+                    "village_name": item["village"].name,
+                    "score": item["score"],
+                    "status": item["status"],
+                    "badge": item["badge"],
+                    "recommendation": item["recommendation"],
+                }
+                for item in data["ranking"]
+            ]
+            n_villages = len(data["ranking"])
 
+        # Simpan sebagai 1 baris cache terbaru (replace yang lama)
+        RecommendationResult.objects.all().delete()
+        RecommendationResult.objects.create(
+            ranking=ranking_json,
+            n_villages=n_villages,
+        )
+
+        return ranking_json
+
+    @classmethod
+    def dashboard(cls):
+        """
+        Ini yang DIBACA tiap kali dashboard dibuka (ringan --
+        cuma ambil dari cache, tanpa hitung TOPSIS ulang).
+        """
+
+        cached = RecommendationResult.objects.order_by(
+            "-computed_at"
+        ).first()
+
+        # FIXED: indicators tetap diambil live -- ini query
+        # ringan (bukan bagian yang berat), tidak perlu di-cache.
+        # Template butuh ini buat tabel "Indicator Weight".
+        indicators = list(RecommendationSelector.indicators())
+
+        if cached is None:
             return {
-                "result": [],
                 "ranking": [],
-                "villages": [],
-                "indicators": [],
-                "decision_matrix": [],
-                "normalized": [],
-                "weighted": [],
-                "positive": [],
-                "negative": [],
-                "distance_positive": [],
-                "distance_negative": [],
-                "preference": [],
+                "result": [],
+                "indicators": indicators,
+                "computed_at": None,
+                "has_cache": False,
             }
 
         return {
-
-            "result": data["ranking"],
-
-            "ranking": data["ranking"],
-
-            "villages": data["villages"],
-
-            "indicators": data["indicators"],
-
-            "decision_matrix": data["matrix"],
-
-            "normalized": data["normalized"],
-
-            "weighted": data["weighted"],
-
-            "positive": data["positive"],
-
-            "negative": data["negative"],
-
-            "distance_positive": data["distance_positive"],
-
-            "distance_negative": data["distance_negative"],
-
-            "preference": data["preference"],
+            "ranking": cached.ranking,
+            "result": cached.ranking,
+            "indicators": indicators,
+            "computed_at": cached.computed_at,
+            "has_cache": True,
         }

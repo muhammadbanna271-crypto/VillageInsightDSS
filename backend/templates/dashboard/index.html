@@ -2,37 +2,28 @@
 {% load static %}
 {% block content %}
 
-<div class="dashboard-banner position-relative">
+<div class="mb-4">
 
-    <img
-        src="{% static 'images/dashboard-banner.svg' %}"
-        alt="Village Banner">
+    <h2>
 
-    <div class="banner-content">
+        🌿 Welcome to TRIP
 
-        <h2>
+    </h2>
 
-            🌿 Welcome to TRIP
+    <p class="text-muted mb-0">
 
-        </h2>
+        Tourism Resource Integration Platform
 
-        <p>
+    </p>
 
-            Tourism Resource Integration Platform
+    <a href="{% url 'analytics:dashboard' %}"
+       class="btn btn-success mt-3">
 
-        </p>
+        <i class="bi bi-graph-up-arrow me-2"></i>
 
-        <a
-            href="{% url 'analytics:dashboard' %}"
-            class="btn btn-success mt-3">
+        Explore Analytics
 
-            <i class="bi bi-graph-up-arrow me-2"></i>
-
-            Explore Analytics
-
-        </a>
-
-    </div>
+    </a>
 
 </div>
 

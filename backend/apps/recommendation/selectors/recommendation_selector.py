@@ -1,25 +1,21 @@
+"""
+Replace isi apps/recommendation/selectors/recommendation_selector.py
+dengan ini. Logikanya sama persis, hasilnya sama persis -- cuma
+caranya ambil data yang diubah dari N+1 query jadi 1 query.
+"""
+
+from collections import defaultdict
+
 from django.db.models import Avg
 
-from apps.master.models import (
-    Village,
-    Indicator,
-)
-
+from apps.master.models import Village, Indicator
 from apps.response.models import Response
 
 
 class RecommendationSelector:
-    """
-    Selector untuk mengambil matriks keputusan
-    berdasarkan rata-rata skor setiap indikator
-    pada masing-masing desa.
-    """
 
     @staticmethod
     def villages():
-        """
-        Semua desa aktif.
-        """
         return (
             Village.objects
             .filter(is_active=True)
@@ -28,74 +24,49 @@ class RecommendationSelector:
 
     @staticmethod
     def indicators():
-        """
-        Semua indikator aktif.
-        """
         return (
             Indicator.objects
             .filter(is_active=True)
             .select_related("variable")
-            .order_by(
-                "variable__code",
-                "code",
-            )
+            .order_by("variable__code", "code")
         )
 
     @classmethod
     def decision_matrix(cls):
-        """
-        Return:
+        villages = list(cls.villages())
+        indicators = list(cls.indicators())
 
-        villages
-        indicators
-        matrix
-
-        matrix berbentuk:
-
-        [
-            [4.2,3.8,4.6],
-            [3.9,4.1,4.8],
-        ]
-        """
-
-        villages = list(
-            cls.villages()
+        # FIXED: satu query buat semua kombinasi desa x indikator,
+        # bukan query terpisah per kombinasi (dulu: 30 desa x 88
+        # indikator = 2.640 query; sekarang: 1 query).
+        rows = (
+            Response.objects
+            .filter(
+                respondent__survey_village__village__in=villages,
+                questionnaire__indicator__in=indicators,
+            )
+            .values(
+                "respondent__survey_village__village_id",
+                "questionnaire__indicator_id",
+            )
+            .annotate(avg_score=Avg("score"))
         )
 
-        indicators = list(
-            cls.indicators()
-        )
+        lookup = {
+            (
+                row["respondent__survey_village__village_id"],
+                row["questionnaire__indicator_id"],
+            ): row["avg_score"]
+            for row in rows
+        }
 
         matrix = []
 
         for village in villages:
-
             row = []
-
             for indicator in indicators:
-
-                avg = (
-                    Response.objects
-                    .filter(
-                        respondent__survey_village__village=village,
-                        questionnaire__indicator=indicator,
-                    )
-                    .aggregate(
-                        value=Avg("score")
-                    )["value"]
-                )
-
-                if avg is None:
-                    avg = 0
-
-                row.append(
-                    float(avg)
-                )
-
+                avg = lookup.get((village.id, indicator.id), 0) or 0
+                row.append(float(avg))
             matrix.append(row)
 
-        return (
-            villages,
-            indicators,
-            matrix,
-        )
+        return villages, indicators, matrix
