@@ -1,4 +1,5 @@
 import json
+import logging
 
 import requests
 from django.conf import settings
@@ -8,6 +9,8 @@ from apps.chatbot.tools import execute_tool, to_openai_tools_schema
 
 
 DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
+
+logger = logging.getLogger(__name__)
 
 
 class DeepSeekChatService:
@@ -74,13 +77,27 @@ class DeepSeekChatService:
 
             if response.status_code != 200:
 
+                # Catat body respons asli ke log server -- status code
+                # saja nggak cukup buat tahu penyebabnya (mis. "messages
+                # must alternate roles", saldo habis, dsb). Cek log
+                # server ("DeepSeek API error ...") untuk detailnya.
+                logger.error(
+                    "DeepSeek API error (status %s): %s",
+                    response.status_code,
+                    response.text[:2000],
+                )
+
+                # Kosongkan history sesi ini supaya kalau penyebabnya
+                # riwayat pesan yang korup/tidak valid, percakapan
+                # berikutnya mulai bersih dari nol (self-healing)
+                # alih-alih macet error terus-menerus.
                 return (
                     (
                         "Maaf, mesin DeepSeek sedang bermasalah "
                         f"(status {response.status_code}). "
                         "Coba lagi sebentar lagi ya."
                     ),
-                    history or [],
+                    [],
                 )
 
             data = response.json()
