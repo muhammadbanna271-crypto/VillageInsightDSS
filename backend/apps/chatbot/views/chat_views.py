@@ -22,6 +22,58 @@ DEEPSEEK_HISTORY_KEY = "chatbot_history_deepseek"
 CLAUDE_UNLOCKED_KEY = "chatbot_claude_unlocked"
 
 
+def _trim_history(messages, max_messages=20):
+    """
+    Potong history TANPA memutus pasangan pesan yang saling terkait
+    (assistant tool_calls/tool_use -> tool/tool_result). Memotong
+    dengan slicing mentah [-20:] bisa menyisakan pesan role "tool"
+    di awal list tanpa pasangan assistant-nya, yang bikin DeepSeek/
+    Claude menolak request dengan error 400 pada pesan berikutnya.
+
+    Dikelompokkan per "giliran" (dimulai dari tiap pesan role="user"
+    sampai sebelum "user" berikutnya), lalu ambil giliran terakhir
+    yang muat dalam max_messages. Pesan system (kalau ada, dan hanya
+    kalau berada di posisi paling awal) selalu dipertahankan.
+    """
+
+    if not messages:
+        return messages
+
+    system = None
+    rest = messages
+
+    if messages[0].get("role") == "system":
+        system = messages[0]
+        rest = messages[1:]
+
+    turns = []
+    current = []
+
+    for msg in rest:
+
+        if msg.get("role") == "user" and current:
+            turns.append(current)
+            current = []
+
+        current.append(msg)
+
+    if current:
+        turns.append(current)
+
+    kept = []
+    total = 0
+
+    for turn in reversed(turns):
+
+        if kept and total + len(turn) > max_messages:
+            break
+
+        kept = turn + kept
+        total += len(turn)
+
+    return ([system] if system else []) + kept
+
+
 def chat_page(request):
     """
     Halaman chat publik -- TIDAK memakai layout admin (tanpa sidebar),
@@ -204,59 +256,31 @@ def chat_message(request):
             )
 
     # ---------------- Panggil engine yang sesuai ----------------
-    # DIBUNGKUS try/except: kalau ada error TAK TERDUGA (bug baru,
-    # API pihak ketiga down, dsb), user tetap dapat balasan JSON
-    # yang rapi -- bukan halaman 500 mentah dari Django.
 
-    try:
+    if engine == "claude":
 
-        if engine == "claude":
+        history_key = CLAUDE_HISTORY_KEY
 
-            history_key = CLAUDE_HISTORY_KEY
+        history = request.session.get(history_key, [])
 
-            history = request.session.get(history_key, [])
-
-            reply, updated_history = ClaudeChatService.ask(
-                message, history,
-            )
-
-        else:
-
-            history_key = DEEPSEEK_HISTORY_KEY
-
-            history = request.session.get(history_key, [])
-
-            reply, updated_history = DeepSeekChatService.ask(
-                message, history,
-            )
-
-    except Exception:
-
-        import logging
-
-        logging.getLogger("django.request").exception(
-            "Chatbot engine '%s' gagal memproses pesan", engine,
+        reply, updated_history = ClaudeChatService.ask(
+            message, history,
         )
 
-        request.session[SESSION_COUNT_KEY] = count + 1
+    else:
 
-        request.session.modified = True
+        history_key = DEEPSEEK_HISTORY_KEY
 
-        return JsonResponse(
-            {
-                "reply": (
-                    "Maaf, sistem chatbot sedang mengalami gangguan "
-                    "teknis. Silakan coba pertanyaan lain atau coba "
-                    "lagi sebentar lagi."
-                ),
-                "remaining": max(0, limit - (count + 1)),
-            },
-            status=200,
+        history = request.session.get(history_key, [])
+
+        reply, updated_history = DeepSeekChatService.ask(
+            message, history,
         )
 
     # Batasi panjang history yang disimpan supaya session tidak
-    # membengkak (simpan pertukaran terakhir saja).
-    request.session[history_key] = updated_history[-20:]
+    # membengkak (simpan pertukaran terakhir saja, tanpa memutus
+    # pasangan tool_calls/tool_use -> tool/tool_result).
+    request.session[history_key] = _trim_history(updated_history)
 
     request.session[SESSION_COUNT_KEY] = count + 1
 
