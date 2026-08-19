@@ -299,8 +299,68 @@ LOGOUT_REDIRECT_URL = "login"
 # --------------------------------------------------
 
 LOGGING = {
+
     "version": 1,
+
     "disable_existing_loggers": False,
+
+    "formatters": {
+
+        "verbose": {
+
+            "format": (
+                "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+            ),
+
+        },
+
+    },
+
+    "handlers": {
+
+        # PENTING: handler ini TIDAK pakai filter "require_debug_true",
+        # jadi tetap nyetak ke stdout walau DEBUG=False (production).
+        # Handler bawaan Django ("console") sengaja cuma aktif kalau
+        # DEBUG=True, itu sebabnya traceback 500 selama ini gak pernah
+        # muncul di Railway logs.
+        "console_always": {
+
+            "level": "ERROR",
+
+            "class": "logging.StreamHandler",
+
+            "formatter": "verbose",
+
+        },
+
+    },
+
+    "loggers": {
+
+        # Semua 500 (unhandled exception di view) lewat logger ini.
+        "django.request": {
+
+            "handlers": ["console_always"],
+
+            "level": "ERROR",
+
+            "propagate": False,
+
+        },
+
+        # Jaga-jaga buat error umum lain di luar request/response cycle.
+        "django": {
+
+            "handlers": ["console_always"],
+
+            "level": "ERROR",
+
+            "propagate": False,
+
+        },
+
+    },
+
 }
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
