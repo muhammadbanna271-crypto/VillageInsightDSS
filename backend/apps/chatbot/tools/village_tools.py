@@ -54,11 +54,16 @@ def get_village_info(village_name, **kwargs):
 
     ranking = RecommendationService.dashboard().get("ranking", [])
 
+    # PENTING: ranking di sini datang dari cache (RecommendationResult),
+    # jadi tiap item berbentuk dict hasil JSON ("village_id",
+    # "village_name", ...) -- BUKAN objek model Village seperti waktu
+    # dihitung live. Jangan akses item["village"], itu peninggalan
+    # sebelum ada sistem cache dan sekarang selalu KeyError.
     match = next(
         (
             item
             for item in ranking
-            if item["village"].id == village.id
+            if item["village_id"] == village.id
         ),
         None,
     )
@@ -104,7 +109,7 @@ def get_top_villages(limit=5, **kwargs):
 
                 "rank": index + 1,
 
-                "village": item["village"].name,
+                "village": item["village_name"],
 
                 "status": item["status"],
 

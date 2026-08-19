@@ -204,25 +204,54 @@ def chat_message(request):
             )
 
     # ---------------- Panggil engine yang sesuai ----------------
+    # DIBUNGKUS try/except: kalau ada error TAK TERDUGA (bug baru,
+    # API pihak ketiga down, dsb), user tetap dapat balasan JSON
+    # yang rapi -- bukan halaman 500 mentah dari Django.
 
-    if engine == "claude":
+    try:
 
-        history_key = CLAUDE_HISTORY_KEY
+        if engine == "claude":
 
-        history = request.session.get(history_key, [])
+            history_key = CLAUDE_HISTORY_KEY
 
-        reply, updated_history = ClaudeChatService.ask(
-            message, history,
+            history = request.session.get(history_key, [])
+
+            reply, updated_history = ClaudeChatService.ask(
+                message, history,
+            )
+
+        else:
+
+            history_key = DEEPSEEK_HISTORY_KEY
+
+            history = request.session.get(history_key, [])
+
+            reply, updated_history = DeepSeekChatService.ask(
+                message, history,
+            )
+
+    except Exception:
+
+        import logging
+
+        logging.getLogger("django.request").exception(
+            "Chatbot engine '%s' gagal memproses pesan", engine,
         )
 
-    else:
+        request.session[SESSION_COUNT_KEY] = count + 1
 
-        history_key = DEEPSEEK_HISTORY_KEY
+        request.session.modified = True
 
-        history = request.session.get(history_key, [])
-
-        reply, updated_history = DeepSeekChatService.ask(
-            message, history,
+        return JsonResponse(
+            {
+                "reply": (
+                    "Maaf, sistem chatbot sedang mengalami gangguan "
+                    "teknis. Silakan coba pertanyaan lain atau coba "
+                    "lagi sebentar lagi."
+                ),
+                "remaining": max(0, limit - (count + 1)),
+            },
+            status=200,
         )
 
     # Batasi panjang history yang disimpan supaya session tidak
