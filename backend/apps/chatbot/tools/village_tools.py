@@ -54,11 +54,8 @@ def get_village_info(village_name, **kwargs):
 
     ranking = RecommendationService.dashboard().get("ranking", [])
 
-    # PENTING: ranking di sini datang dari cache (RecommendationResult),
-    # jadi tiap item berbentuk dict hasil JSON ("village_id",
-    # "village_name", ...) -- BUKAN objek model Village seperti waktu
-    # dihitung live. Jangan akses item["village"], itu peninggalan
-    # sebelum ada sistem cache dan sekarang selalu KeyError.
+    # FIXED: ranking sekarang berupa list of dict hasil cache
+    # (village_id, village_name, ...) -- BUKAN objek Django lagi.
     match = next(
         (
             item
@@ -109,6 +106,8 @@ def get_top_villages(limit=5, **kwargs):
 
                 "rank": index + 1,
 
+                # FIXED: village_name langsung (dict), bukan
+                # item["village"].name (objek).
                 "village": item["village_name"],
 
                 "status": item["status"],
