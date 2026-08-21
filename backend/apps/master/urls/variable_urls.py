@@ -1,6 +1,7 @@
 from django.urls import path
 
 from apps.master.views import (
+    VariableConfigurationPageView,
     VariableCreateView,
     VariableDeleteView,
     VariableDetailView,
@@ -14,6 +15,12 @@ urlpatterns = [
         "variables/",
         VariableListView.as_view(),
         name="variable-list",
+    ),
+
+    path(
+        "variables/configure/",
+        VariableConfigurationPageView.as_view(),
+        name="variable-config-page",
     ),
 
     path(

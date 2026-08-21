@@ -1,4 +1,7 @@
 from apps.master.models import Questionnaire
+from apps.master.services.variable_configuration_service import (
+    VariableConfigurationService,
+)
 
 
 class ResponseService:
@@ -14,13 +17,14 @@ class ResponseService:
             .select_related(
                 "indicator",
                 "indicator__variable",
+                "indicator__variable__mediator_layer",
             )
             .filter(
                 is_active=True,
+                indicator__is_active=True,
+                indicator__variable__is_active=True,
             )
             .order_by(
-                "indicator__variable__code",
-                "indicator__code",
-                "question_order",
+                *VariableConfigurationService.questionnaire_ordering()
             )
         )

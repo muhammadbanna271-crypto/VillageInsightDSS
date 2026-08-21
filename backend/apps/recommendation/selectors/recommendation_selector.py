@@ -4,11 +4,12 @@ dengan ini. Logikanya sama persis, hasilnya sama persis -- cuma
 caranya ambil data yang diubah dari N+1 query jadi 1 query.
 """
 
-from collections import defaultdict
-
 from django.db.models import Avg
 
-from apps.master.models import Village, Indicator
+from apps.master.models import Village
+from apps.master.services.variable_configuration_service import (
+    VariableConfigurationService,
+)
 from apps.response.models import Response
 
 
@@ -24,12 +25,7 @@ class RecommendationSelector:
 
     @staticmethod
     def indicators():
-        return (
-            Indicator.objects
-            .filter(is_active=True)
-            .select_related("variable")
-            .order_by("variable__code", "code")
-        )
+        return VariableConfigurationService.active_indicators()
 
     @classmethod
     def decision_matrix(cls):

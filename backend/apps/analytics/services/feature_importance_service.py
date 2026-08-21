@@ -69,14 +69,24 @@ class FeatureImportanceService:
     def radar_axes_for_village(cls, village):
         """
         Nilai radar chart per desa: rata-rata skor tiap variabel
-        (X1..X5, Y1..Y6) -- 11 axis, sesuai VariableScore yang
-        sudah ada.
+        (X.., Y.., Z..) diurutkan mengikuti konfigurasi role/layer/order.
         """
 
-        scores = (
+        scores = list(
             village.variable_scores
-            .select_related("variable")
-            .order_by("variable__code")
+            .select_related("variable", "variable__mediator_layer")
+        )
+
+        scores.sort(
+            key=lambda score: (
+                score.variable.role_rank,
+                (
+                    score.variable.mediator_layer.number
+                    if score.variable.mediator_layer
+                    else 0
+                ),
+                score.variable.order,
+            )
         )
 
         return [

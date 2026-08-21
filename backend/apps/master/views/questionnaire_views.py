@@ -19,7 +19,9 @@ from apps.master.models import (
     Indicator,
     Variable,
 )
-
+from apps.master.services.variable_configuration_service import (
+    VariableConfigurationService,
+)
 
 
 class QuestionnaireListView(BaseListView):
@@ -32,7 +34,7 @@ class QuestionnaireListView(BaseListView):
 
     paginate_by = 10
 
-    ordering = ["code"]
+    ordering = ["order"]
 
     search_fields = [
         "code",
@@ -43,6 +45,7 @@ class QuestionnaireListView(BaseListView):
 
         queryset = (
             Variable.objects
+            .select_related("mediator_layer")
             .annotate(
                 indicator_count=Count(
                     "indicators",
@@ -53,7 +56,7 @@ class QuestionnaireListView(BaseListView):
                     distinct=True,
                 ),
             )
-            .order_by("code")
+            .order_by(*VariableConfigurationService.ordering())
         )
 
         q = self.request.GET.get("q")
@@ -63,7 +66,25 @@ class QuestionnaireListView(BaseListView):
                 name__icontains=q
             )
 
+        group = self.request.GET.get("group", "")
+
+        queryset = VariableConfigurationService.filter_by_group(
+            queryset, group
+        )
+
         return queryset
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context["group_options"] = (
+            VariableConfigurationService.group_filter_options()
+        )
+
+        context["selected_group"] = self.request.GET.get("group", "")
+
+        return context
 
 class QuestionnaireByVariableView(BaseListView):
     """

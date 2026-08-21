@@ -16,11 +16,15 @@ from common.views import (
 
 from apps.master.forms import IndicatorForm
 from apps.master.models import Indicator, Variable
+from apps.master.services.variable_configuration_service import (
+    VariableConfigurationService,
+)
 
 
 class IndicatorListView(BaseListView):
     """
-    Menampilkan Variable sebagai group Indicator
+    Menampilkan Variable sebagai group Indicator,
+    urut mengikuti Variable Configuration.
     """
 
     model = Variable
@@ -31,7 +35,7 @@ class IndicatorListView(BaseListView):
 
     paginate_by = 10
 
-    ordering = ["code"]
+    ordering = ["order"]
 
     search_fields = [
         "code",
@@ -42,10 +46,11 @@ class IndicatorListView(BaseListView):
 
         queryset = (
             Variable.objects
+            .select_related("mediator_layer")
             .annotate(
                 indicator_count=Count("indicators")
             )
-            .order_by("code")
+            .order_by(*VariableConfigurationService.ordering())
         )
 
         q = self.request.GET.get("q")
@@ -56,7 +61,25 @@ class IndicatorListView(BaseListView):
                 name__icontains=q
             )
 
+        group = self.request.GET.get("group", "")
+
+        queryset = VariableConfigurationService.filter_by_group(
+            queryset, group
+        )
+
         return queryset
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context["group_options"] = (
+            VariableConfigurationService.group_filter_options()
+        )
+
+        context["selected_group"] = self.request.GET.get("group", "")
+
+        return context
 
 class IndicatorByVariableView(BaseListView):
     """

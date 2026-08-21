@@ -1,6 +1,8 @@
 from django.db.models import Avg
 
-from apps.master.models import Indicator
+from apps.master.services.variable_configuration_service import (
+    VariableConfigurationService,
+)
 from apps.recommendation.selectors.recommendation_selector import (
     RecommendationSelector,
 )
@@ -48,10 +50,7 @@ class AnalyticsSelector:
         """
 
         indicators = list(
-            Indicator.objects
-            .filter(is_active=True)
-            .select_related("variable")
-            .order_by("variable__code", "code")
+            VariableConfigurationService.active_indicators()
         )
 
         row = []

@@ -165,6 +165,44 @@ ML Analytics Dashboard
     <p class="mb-0">{{ narrative }}</p>
 </div>
 
+<!-- ================= Relasi Predictor -> Response ================= -->
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white"><strong>Relasi Predictor &rarr; Response (Korelasi)</strong></div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Predictor</th>
+                    <th>Response</th>
+                    <th class="text-end">Korelasi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rel in relationship %}
+                <tr>
+                    <td>{{ rel.predictor }}</td>
+                    <td>{{ rel.response }}</td>
+                    <td class="text-end">
+                        {% if rel.correlation is not None %}
+                        <span class="badge {% if rel.correlation >= 0 %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ rel.correlation }}
+                        </span>
+                        {% else %}
+                        <span class="text-secondary">&mdash;</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">Belum ada data relasi.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <!-- ================= Tabel Desa & Cluster ================= -->
 
 <div class="card shadow-sm border-0 mb-4">

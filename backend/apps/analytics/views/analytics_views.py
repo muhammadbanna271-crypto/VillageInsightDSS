@@ -58,6 +58,9 @@ def ml_dashboard(request):
     from apps.analytics.services.ml_dashboard_service import (
         MLDashboardService,
     )
+    from apps.analytics.services.relationship_analysis_service import (
+        RelationshipAnalysisService,
+    )
 
     village_table = MLDashboardService.village_table()
 
@@ -92,6 +95,8 @@ def ml_dashboard(request):
         "narrative": MLDashboardService.narrative_summary(
             variable_importance,
         ),
+
+        "relationship": RelationshipAnalysisService.run(),
 
     }
 
@@ -188,6 +193,18 @@ def village_radar_json(request, village_id):
 
         "values": [axis["score"] for axis in radar],
 
+    })
+
+
+def relationship_json(request):
+    """JSON korelasi predictor -> response (config-driven)."""
+
+    from apps.analytics.services.relationship_analysis_service import (
+        RelationshipAnalysisService,
+    )
+
+    return JsonResponse({
+        "relationships": RelationshipAnalysisService.run(),
     })
 
 

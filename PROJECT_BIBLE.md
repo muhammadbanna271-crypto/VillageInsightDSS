@@ -495,4 +495,21 @@ Deployment
 
 ---
 
+# 20. DYNAMIC VARIABLE MODELING
+
+Predictor / Mediator / Response dikonfigurasi secara dinamis (bukan
+hard-coded). Variable punya `role`, `order`, dan `mediator_layer`.
+
+Mapping
+
+- Predictor -> X1...Xn
+- Mediator  -> Y1...Yn (0..N layer)
+- Response  -> Z1...Zn
+
+Code X/Y/Z adalah display code (bukan primary key). Primary key = `id`.
+Urutan persistis lewat `order`; layer mediator lewat model
+`MediatorLayer`. Source of truth = `VariableConfigurationService`.
+
+Lihat: docs/architecture/dynamic-variable-modeling.md
+
 # END OF PROJECT BIBLE

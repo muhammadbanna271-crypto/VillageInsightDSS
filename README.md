@@ -137,6 +137,19 @@ TRIP integrates several analytical methods, including:
 
 ---
 
+# 🧩 Dynamic Variable Modeling
+
+Predictor, Mediator, dan Response variable dapat dikonfigurasi secara
+dinamis (role, urutan, dan jumlah layer mediator) tanpa mengubah source
+code. Code `X1…Xn` / `Y1…Yn` / `Z1…Zn` di-generate otomatis dan urutan
+variable persistis di database.
+
+- Predictor → X1…Xn
+- Mediator → Y1…Yn (0..N layer)
+- Response → Z1…Zn
+
+Lihat: docs/architecture/dynamic-variable-modeling.md
+
 # 📂 Main Modules
 
 - Authentication

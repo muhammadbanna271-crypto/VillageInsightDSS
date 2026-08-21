@@ -6,6 +6,7 @@ from apps.analytics.views import (
     retrain_model,
     predict_village,
     village_radar_json,
+    relationship_json,
     simulate_cluster,
     export_excel,
     export_pdf,
@@ -46,6 +47,12 @@ urlpatterns = [
         "ml/radar/<int:village_id>/",
         village_radar_json,
         name="ml-radar-json",
+    ),
+
+    path(
+        "ml/relationship/",
+        relationship_json,
+        name="ml-relationship-json",
     ),
 
     path(
