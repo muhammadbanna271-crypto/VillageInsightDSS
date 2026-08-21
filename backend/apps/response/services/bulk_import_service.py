@@ -10,35 +10,10 @@ from apps.response.models import Response
 from apps.survey.models import SurveyVillage
 
 
-# Mapping ID Desa -> Nama Desa/Kelurahan (24 desa, Kota Batu),
-# dipakai untuk mencocokkan kolom "Desa" di file Excel import
-# (yang isinya angka) ke Village yang sudah ada di Master Data.
-VILLAGE_ID_MAP = {
-    1: "Oro-oro Ombo",
-    2: "Ngaglik",
-    3: "Pesanggrahan",
-    4: "Songgokerto",
-    5: "Sumberejo",
-    6: "Temas",
-    7: "Sisir",
-    8: "Sidomulyo",
-    9: "Bumiaji",
-    10: "Punten",
-    11: "Tulungrejo",
-    12: "Sumbergondo",
-    13: "Bulukerto",
-    14: "Gunungsari",
-    15: "Pandanrejo",
-    16: "Giripurno",
-    17: "Sumberbrantas",
-    18: "Beji",
-    19: "Torongrejo",
-    20: "Mojorejo",
-    21: "Pendem",
-    22: "Junrejo",
-    23: "Dadaprejo",
-    24: "Tlekung",
-}
+# Kolom "Desa" di file Excel berupa angka (1..24) yang cocok dengan
+# Village.code (mis. "1" -> Oro-oro Ombo). Mapping dilakukan lewat
+# Village.code, bukan nama hard-coded, supaya tetap valid kalau nama
+# desa berubah.
 
 # Kolom non-indikator yang dikenali di file Excel
 META_COLUMNS = {
@@ -51,7 +26,7 @@ META_COLUMNS = {
 
 DEFAULT_BIRTH_DATE = datetime.date(2000, 1, 1)
 
-INDICATOR_PATTERN = re.compile(r"^[xy]\d+\.\d+$")
+INDICATOR_PATTERN = re.compile(r"^[xyz]\d+\.\d+$")
 
 
 class BulkImportError(Exception):
@@ -327,24 +302,18 @@ class ResponseBulkImportService:
         if desa_id_int in cache:
             return cache[desa_id_int]
 
-        village_name = VILLAGE_ID_MAP.get(desa_id_int)
-
-        if village_name is None:
-
-            raise BulkImportError(
-                f"ID Desa {desa_id_int} tidak dikenali."
-            )
-
+        # Dicocokkan lewat Village.code (dinamis), bukan nama hard-coded.
         village = (
             Village.objects
-            .filter(name=village_name)
+            .filter(code=str(desa_id_int))
             .first()
         )
 
         if village is None:
 
             raise BulkImportError(
-                f"Desa \"{village_name}\" belum ada di Master Data."
+                f"Desa dengan kode {desa_id_int} "
+                "tidak ditemukan di Master Data."
             )
 
         cache[desa_id_int] = village

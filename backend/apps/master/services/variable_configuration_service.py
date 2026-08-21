@@ -250,6 +250,46 @@ class VariableConfigurationService:
         )
 
     @classmethod
+    def config_signature(cls):
+        """Hash deterministik dari konfigurasi yang memengaruhi analysis.
+
+        URUTAN tidak diperhitungkan: reorder/pindah posisi dalam grup yang
+        sama (mis. X1 <-> X5, tetap predictor) tidak mengubah substansi
+        analysis, sehingga tidak dianggap perubahan. Yang dihitung adalah
+        SET variable (role + layer) dan SET indicator (variable + weight
+        + criterion_type).
+        """
+        import hashlib
+
+        from apps.master.models import MediatorLayer
+
+        parts = []
+
+        parts.extend(
+            sorted(
+                f"ind|{i.id}|{i.variable_id}|{i.weight}|{i.criterion_type}"
+                for i in cls.active_indicators()
+            )
+        )
+
+        parts.extend(
+            sorted(
+                f"var|{v.id}|{v.role}|{v.mediator_layer_id or 0}"
+                for v in cls.ordered_queryset(active_only=True)
+            )
+        )
+
+        parts.extend(
+            sorted(
+                f"layer|{l.id}|{l.number}"
+                for l in MediatorLayer.objects.filter(is_active=True)
+            )
+        )
+
+        raw = "\n".join(parts)
+        return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+    @classmethod
     def next_layer_number(cls):
         current = MediatorLayer.objects.aggregate(
             m=Max("number")
@@ -558,19 +598,11 @@ class VariableConfigurationService:
 
     @staticmethod
     def mark_analysis_outdated():
-        """Tandai hasil analysis sebagai stale setelah konfigurasi berubah.
-
-        MLModelRegistry ditandai non-aktif (soft); RecommendationResult
-        (cache TOPSIS) dihapus. Analysis dihitung ulang saat dibutuhkan
-        (tombol Retrain / Hitung Ulang), bukan tiap page load.
-        """
-        from apps.analytics.models import MLModelRegistry
-        from apps.recommendation.models import RecommendationResult
-
-        MLModelRegistry.objects.filter(is_active=True).update(
-            is_active=False
-        )
-        RecommendationResult.objects.all().delete()
+        """(No-op) Staleness kini otomatis terdeteksi lewat perbandingan
+        signature konfigurasi (AnalysisState.is_stale()), sehingga kalau
+        perubahan di-undo/revert, analysis dianggap valid lagi tanpa perlu
+        dihitung ulang. Method ini dipertahankan sebagai hook."""
+        pass
 
     # =========================================================
     # AUDIT

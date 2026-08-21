@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 
+from apps.analytics.models import AnalysisState
 from apps.recommendation.services import RecommendationService
 
 
@@ -18,11 +19,15 @@ def recommendation_dashboard(request):
 
     context = RecommendationService.dashboard()
 
-    # is_superuser dikirim ke template, dipakai buat nampilin
-    # tombol "Hitung Ulang" cuma buat superuser.
+    # is_staff/is_superuser dikirim ke template, dipakai buat nampilin
+    # tombol "Hitung Ulang" (staff & superuser).
     context["can_recalculate"] = (
-        request.user.is_authenticated and request.user.is_superuser
+        request.user.is_authenticated
+        and (request.user.is_staff or request.user.is_superuser)
     )
+
+    # Penanda apakah ada perubahan konfigurasi yang belum dihitung ulang.
+    context["analysis_stale"] = AnalysisState.is_stale()
 
     return render(
         request,
@@ -32,7 +37,7 @@ def recommendation_dashboard(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_staff or u.is_superuser)
 def recalculate_recommendation(request):
     """
     Cuma superuser yang bisa trigger hitung ulang. Kalau visitor

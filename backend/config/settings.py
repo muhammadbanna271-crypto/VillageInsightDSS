@@ -38,7 +38,7 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 CHATBOT_MODEL = os.getenv("CHATBOT_MODEL", "claude-sonnet-5")
 
 CHATBOT_MAX_MESSAGES_PER_SESSION = int(
-    os.getenv("CHATBOT_MAX_MESSAGES_PER_SESSION", "30")
+    os.getenv("CHATBOT_MAX_MESSAGES_PER_SESSION", "100")
 )
 
 # Lapis pengaman KEDUA di sisi aplikasi (lapis pertama & paling
@@ -293,6 +293,16 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard:dashboard"
 
 LOGOUT_REDIRECT_URL = "login"
+
+# --------------------------------------------------
+# SESSION
+# --------------------------------------------------
+
+# Sesi habis setelah 30 menit TIDAK AKTIF (rolling timeout), supaya
+# user tidak "login selamanya". Ubah lewat env var SESSION_COOKIE_AGE.
+SESSION_COOKIE_AGE = int(os.getenv("SESSION_COOKIE_AGE", "1800"))
+
+SESSION_SAVE_EVERY_REQUEST = True
 
 # --------------------------------------------------
 # LOGGING

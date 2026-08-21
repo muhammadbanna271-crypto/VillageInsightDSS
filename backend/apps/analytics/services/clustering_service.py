@@ -112,6 +112,11 @@ class ClusteringService:
             is_active=True,
         )
 
+        # Model sudah di-train ulang -> simpan signature konfigurasi.
+        from apps.analytics.models import AnalysisState
+
+        AnalysisState.mark_computed()
+
         return {
 
             "success": True,
@@ -123,6 +128,30 @@ class ClusteringService:
             "silhouette_score": fit_result["silhouette_score"],
 
         }
+
+    @classmethod
+    def ensure_trained(cls):
+        """Ambil MLModelRegistry aktif; latih model kalau belum ada.
+
+        Fallback lazy supaya chatbot/dashboard tetap punya data (clustering,
+        feature importance) walau admin belum klik "Retrain Model" manual.
+        Kalau sudah ada registry aktif, cukup dibaca (tanpa latih ulang).
+        """
+        registry = (
+            MLModelRegistry.objects
+            .filter(is_active=True)
+            .first()
+        )
+
+        if registry is None:
+            cls.train_and_save()
+            registry = (
+                MLModelRegistry.objects
+                .filter(is_active=True)
+                .first()
+            )
+
+        return registry
 
     # =========================================================
     # Pemetaan label KMeans (0,1,2,...) -> Cluster master data,

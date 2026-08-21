@@ -97,6 +97,13 @@ dist/
 datasets/raw/
 datasets/backup/
 
+# ================= Data Fixtures (dumpdata — sensitif) =================
+
+data.json
+initial_data.json
+backend/data.json
+backend/initial_data.json
+
 
 # ================= Export Files =================
 

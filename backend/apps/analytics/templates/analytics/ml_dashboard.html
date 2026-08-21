@@ -67,6 +67,13 @@ ML Analytics Dashboard
 
 </div>
 
+{% if analysis_stale %}
+<div class="alert alert-warning rounded-3 d-flex align-items-center mb-4">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    Konfigurasi variable berubah sejak terakhir dihitung. Silakan klik <strong>&quot;Retrain Model&quot;</strong> untuk memperbarui hasil.
+</div>
+{% endif %}
+
 <div class="d-flex flex-wrap gap-2 mb-4">
 
     <form method="post" action="{% url 'analytics:ml-retrain' %}" id="retrain-form">

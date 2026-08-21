@@ -7,6 +7,13 @@ Recommendation Dashboard
 {% block content %}
 <div class="container-fluid">
 
+    {% if analysis_stale %}
+    <div class="alert alert-warning rounded-3 d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        Konfigurasi variable berubah sejak terakhir dihitung. Silakan klik <strong>&quot;Hitung Ulang&quot;</strong> untuk memperbarui hasil.
+    </div>
+    {% endif %}
+
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>

@@ -205,6 +205,11 @@ class RecommendationService:
             n_villages=n_villages,
         )
 
+        # Hasil sudah dihitung ulang -> simpan signature konfigurasi.
+        from apps.analytics.models import AnalysisState
+
+        AnalysisState.mark_computed()
+
         return ranking_json
 
     @classmethod
@@ -212,11 +217,19 @@ class RecommendationService:
         """
         Ini yang DIBACA tiap kali dashboard dibuka (ringan --
         cuma ambil dari cache, tanpa hitung TOPSIS ulang).
+        Kalau cache belum ada (fresh deploy / konfigurasi berubah),
+        hitung live dulu supaya dashboard & chatbot tetap jalan.
         """
 
         cached = RecommendationResult.objects.order_by(
             "-computed_at"
         ).first()
+
+        if cached is None:
+            cls.recalculate()
+            cached = RecommendationResult.objects.order_by(
+                "-computed_at"
+            ).first()
 
         # FIXED: indicators tetap diambil live -- ini query
         # ringan (bukan bagian yang berat), tidak perlu di-cache.

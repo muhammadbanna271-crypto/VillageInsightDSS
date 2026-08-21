@@ -12,11 +12,11 @@ class FeatureImportanceService:
     @staticmethod
     def latest_registry():
 
-        return (
-            MLModelRegistry.objects
-            .filter(is_active=True)
-            .first()
+        from apps.analytics.services.clustering_service import (
+            ClusteringService,
         )
+
+        return ClusteringService.ensure_trained()
 
     @classmethod
     def dominant_indicators(cls, top_n=10):

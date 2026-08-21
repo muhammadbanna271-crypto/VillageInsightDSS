@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.analytics.services import AnalyticsService
 
+from apps.analytics.models import AnalysisState
+
 from apps.master.models import Village
 from apps.survey.models import Survey
 from apps.respondent.models import Respondent
@@ -97,6 +99,8 @@ def ml_dashboard(request):
         ),
 
         "relationship": RelationshipAnalysisService.run(),
+
+        "analysis_stale": AnalysisState.is_stale(),
 
     }
 

@@ -1,6 +1,5 @@
 from sklearn.decomposition import PCA
 
-from apps.analytics.models import MLModelRegistry
 from apps.analytics.selectors.analytics_selector import AnalyticsSelector
 from apps.master.models import Cluster, Village
 from apps.respondent.models import Respondent
@@ -25,11 +24,11 @@ class MLDashboardService:
     @staticmethod
     def summary():
 
-        registry = (
-            MLModelRegistry.objects
-            .filter(is_active=True)
-            .first()
+        from apps.analytics.services.clustering_service import (
+            ClusteringService,
         )
+
+        registry = ClusteringService.ensure_trained()
 
         return {
 
@@ -167,11 +166,11 @@ class MLDashboardService:
     @staticmethod
     def narrative_summary(variable_importance):
 
-        registry = (
-            MLModelRegistry.objects
-            .filter(is_active=True)
-            .first()
+        from apps.analytics.services.clustering_service import (
+            ClusteringService,
         )
+
+        registry = ClusteringService.ensure_trained()
 
         if registry is None:
 

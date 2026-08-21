@@ -209,11 +209,17 @@ def chat_message(request):
 
     # ---------------- Rate limit per sesi (kedua engine) ----------------
 
+    # Staff/superuser bebas dari batasan pemakaian (tanpa limit).
+    is_staff_user = (
+        request.user.is_authenticated
+        and (request.user.is_staff or request.user.is_superuser)
+    )
+
     count = request.session.get(SESSION_COUNT_KEY, 0)
 
     limit = settings.CHATBOT_MAX_MESSAGES_PER_SESSION
 
-    if count >= limit:
+    if not is_staff_user and count >= limit:
 
         return JsonResponse(
             {
@@ -241,7 +247,7 @@ def chat_message(request):
 
         budget = Decimal(str(settings.CHATBOT_MONTHLY_BUDGET_USD))
 
-        if projected_cost > budget:
+        if not is_staff_user and projected_cost > budget:
 
             return JsonResponse(
                 {
@@ -307,6 +313,10 @@ def chat_message(request):
     return JsonResponse(
         {
             "reply": reply,
-            "remaining": max(0, limit - (count + 1)),
+            "remaining": (
+                None
+                if is_staff_user
+                else max(0, limit - (count + 1))
+            ),
         }
     )
