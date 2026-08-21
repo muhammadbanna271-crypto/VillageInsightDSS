@@ -2,6 +2,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
+from apps.analytics.models import AnalysisState
+
 from common.views import (
     BaseCreateView,
     BaseDeleteView,
@@ -45,6 +47,10 @@ class VariableConfigurationPageView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Tetapkan baseline signature kalau belum ada, supaya perubahan
+        # yang dilakukan dari halaman ini bisa terdeteksi sebagai "stale".
+        AnalysisState.ensure_baseline()
 
         config = VariableConfigurationService.load()
         layers = list(MediatorLayer.objects.order_by("number"))

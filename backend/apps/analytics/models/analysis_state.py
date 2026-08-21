@@ -39,12 +39,26 @@ class AnalysisState(models.Model):
         return VariableConfigurationService.config_signature()
 
     @classmethod
-    def is_stale(cls):
+    def ensure_baseline(cls):
+        """Tetapkan baseline signature kalau masih kosong (mis. setelah
+        migrasi). Baseline = konfigurasi saat ini, sehingga perubahan
+        berikutnya bisa terdeteksi."""
         obj, _ = cls.objects.get_or_create(pk=1)
         if not obj.signature:
-            # Belum pernah dihitung (belum ada baseline) -> bukan "stale".
+            obj.signature = cls._current_signature()
+            obj.save(update_fields=["signature"])
+        return obj
+
+    @classmethod
+    def is_stale(cls):
+        current = cls._current_signature()
+        obj, _ = cls.objects.get_or_create(pk=1)
+        if not obj.signature:
+            # Belum ada baseline -> tetapkan sekarang, anggap tidak stale.
+            obj.signature = current
+            obj.save(update_fields=["signature"])
             return False
-        return cls._current_signature() != obj.signature
+        return current != obj.signature
 
     @classmethod
     def mark_computed(cls):
