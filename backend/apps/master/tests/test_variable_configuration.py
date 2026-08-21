@@ -85,6 +85,24 @@ class VariableConfigurationServiceTest(TestCase):
             Indicator.objects.filter(pk=ind.pk, variable=var).exists()
         )
 
+    def test_move_with_position_shifts_down(self):
+        layer1 = MediatorLayer.objects.create(number=1)
+        create_variable("mediator", order=1, name="M1", layer=layer1)
+        create_variable("mediator", order=2, name="M2", layer=layer1)
+        r = create_variable("response", order=1, name="R1")
+        VariableConfigurationService.regenerate_codes()
+
+        # Sisipkan R1 ke mediator posisi 1 -> M1 & M2 geser ke bawah.
+        VariableConfigurationService.move(r.id, "mediator", 1, position=1)
+
+        config = VariableConfigurationService.load()
+        mediator_names = [
+            v["name"]
+            for layer in config["mediator_layers"]
+            for v in layer
+        ]
+        self.assertEqual(mediator_names, ["R1", "M1", "M2"])
+
     def test_add_deactivate_activate_remove_layer(self):
         layer = MediatorLayer.objects.create(number=1)
 

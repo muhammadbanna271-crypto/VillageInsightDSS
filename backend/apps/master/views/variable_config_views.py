@@ -117,6 +117,7 @@ class MoveVariableView(_StaffRequiredJsonMixin, View):
         variable_id = body.get("variable_id")
         new_role = body.get("new_role")
         layer_number = body.get("layer")
+        position = body.get("position")
 
         if new_role not in Variable.ROLE_ORDER:
             return _json(
@@ -124,9 +125,19 @@ class MoveVariableView(_StaffRequiredJsonMixin, View):
                 status=400,
             )
 
+        if position is not None:
+            try:
+                position = int(position)
+            except (TypeError, ValueError):
+                position = None
+
         try:
             config = VariableConfigurationService.move(
-                variable_id, new_role, layer_number, user=request.user
+                variable_id,
+                new_role,
+                layer_number,
+                position=position,
+                user=request.user,
             )
         except (ConfigurationError, Variable.DoesNotExist) as exc:
             return _json(

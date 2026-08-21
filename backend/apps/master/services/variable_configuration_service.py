@@ -406,8 +406,13 @@ class VariableConfigurationService:
 
     @classmethod
     @transaction.atomic
-    def move(cls, variable_id, new_role, layer_number=None, user=None):
-        """Pindahkan variable antar role / antar layer mediator."""
+    def move(cls, variable_id, new_role, layer_number=None, position=None, user=None):
+        """Pindahkan variable antar role / antar layer mediator.
+
+        Kalau ``position`` diberikan (1-based), variable disisipkan di posisi
+        itu dan variable di bawahnya otomatis digeser (+1). Kalau tidak,
+        variable ditambahkan ke urutan paling akhir grup tujuan.
+        """
         if new_role not in Variable.ROLE_ORDER:
             raise ConfigurationError("Role tidak valid.")
 
@@ -432,8 +437,14 @@ class VariableConfigurationService:
         else:
             variable.mediator_layer = None
 
-        # Tambah ke urutan paling akhir grup tujuan.
-        variable.order = cls._next_order(new_role, variable.mediator_layer)
+        if position is None:
+            # Tambah ke urutan paling akhir grup tujuan.
+            variable.order = cls._next_order(
+                new_role, variable.mediator_layer
+            )
+        else:
+            cls._insert_at(variable, new_role, position)
+
         variable.save(update_fields=["role", "mediator_layer", "order"])
 
         new_layer = (
@@ -582,6 +593,29 @@ class VariableConfigurationService:
             variables = variables.filter(mediator_layer__isnull=True)
         current = variables.aggregate(m=Max("order"))["m"]
         return (current or 0) + 1
+
+    @staticmethod
+    def _insert_at(variable, role, position):
+        """Sisipkan variable di ``position`` (1-based) dalam grup tujuannya,
+        lalu geser variable dengan order >= position ke bawah (+1)."""
+        group = (
+            Variable.objects
+            .filter(role=role)
+            .exclude(id=variable.id)
+        )
+
+        if role == Variable.ROLE_MEDIATOR:
+            group = group.filter(mediator_layer=variable.mediator_layer)
+        else:
+            group = group.filter(mediator_layer__isnull=True)
+
+        for existing in (
+            group.filter(order__gte=position).order_by("-order")
+        ):
+            existing.order += 1
+            existing.save(update_fields=["order"])
+
+        variable.order = position
 
     @staticmethod
     def _renumber_layers():

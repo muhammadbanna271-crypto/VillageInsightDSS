@@ -337,8 +337,9 @@ atau pindah antar grup. Perubahan tersimpan ke database sebagai sumber kebenaran
             without.splice(insertionIndex(zoneBody, clientY), 0, parseInt(src.id, 10));
             saveReorder(targetRole, without, targetLayer);
         } else {
-            // Pindah antar grup/layer
-            saveMove(src.id, targetRole, targetLayer);
+            // Pindah antar grup/layer pada posisi drop (1-based)
+            var position = insertionIndex(zoneBody, clientY) + 1;
+            saveMove(src.id, targetRole, targetLayer, position);
         }
     }
 
@@ -360,12 +361,13 @@ atau pindah antar grup. Perubahan tersimpan ke database sebagai sumber kebenaran
             });
     }
 
-    function saveMove(id, role, layer) {
+    function saveMove(id, role, layer, position) {
         setLoading(true);
         post(URLs.move, {
             variable_id: parseInt(id, 10),
             new_role: role,
-            layer: layer ? parseInt(layer, 10) : null
+            layer: layer ? parseInt(layer, 10) : null,
+            position: position || null
         })
             .then(function (res) {
                 setLoading(false);
