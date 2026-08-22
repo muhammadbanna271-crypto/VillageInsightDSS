@@ -81,7 +81,7 @@ PRINSIP PENTING
 1. Jangan hard-code jumlah atau urutan variable, selalu baca dari VariableConfigurationService.
 2. Variable Configuration adalah single source of truth untuk UI, kuesioner, analisis, dan dashboard.
 3. Tulis test untuk tiap fitur baru (python manage.py test).
-4. Jangan over-engineer, fitur yang tidak menjawab research question justru melemahkan nilai.
+4. Jangan over-engineer, fitur yang kurang berguna hanya akan menambah beban komputasi
 5. Pertahankan permission: visitor read-only, staff dan superuser boleh mengubah.
 
 
