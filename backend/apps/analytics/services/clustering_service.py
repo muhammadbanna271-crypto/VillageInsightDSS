@@ -22,6 +22,15 @@ LEVEL_NAMES = [
     "Sangat Rendah",
 ]
 
+# Warna cluster berdasarkan level
+CLUSTER_COLORS = {
+    "Unggul": "#198754",       # Hijau
+    "Sedang": "#fd7e14",       # Oranye
+    "Berkembang": "#0d6efd",   # Biru
+    "Rendah": "#dc3545",       # Merah
+    "Sangat Rendah": "#6f42c1", # Ungu
+}
+
 
 class ClusteringService:
 
@@ -133,9 +142,12 @@ class ClusteringService:
     def ensure_trained(cls):
         """Ambil MLModelRegistry aktif; latih model kalau belum ada.
 
-        Fallback lazy supaya chatbot/dashboard tetap punya data (clustering,
-        feature importance) walau admin belum klik "Retrain Model" manual.
-        Kalau sudah ada registry aktif, cukup dibaca (tanpa latih ulang).
+        Fallback lazy supaya chatbot/dashboard tetap punya data
+        (clustering, feature importance) walau admin belum klik
+        "Retrain Model" manual.
+
+        Kalau sudah ada registry aktif, cukup dibaca
+        (tanpa latih ulang).
         """
         registry = (
             MLModelRegistry.objects
@@ -192,6 +204,11 @@ class ClusteringService:
 
             code = f"AUTOK{rank + 1}"
 
+            expected_color = CLUSTER_COLORS.get(
+                level_name,
+                "#6c757d",
+            )
+
             cluster_obj, _ = Cluster.objects.get_or_create(
                 code=code,
                 defaults={
@@ -200,8 +217,17 @@ class ClusteringService:
                         "Dibentuk otomatis oleh model K-Means "
                         "berdasarkan hasil clustering desa."
                     ),
+                    "color": expected_color,
                 },
             )
+
+            # Pastikan warna cluster yang sudah ada
+            # tetap mengikuti level-nya.
+            if cluster_obj.color != expected_color:
+                cluster_obj.color = expected_color
+                cluster_obj.save(
+                    update_fields=["color"],
+                )
 
             mapping[str(label)] = {
 
@@ -213,7 +239,12 @@ class ClusteringService:
 
                 "rank": rank + 1,
 
-                "mean_score": round(cluster_means[label], 3),
+                "mean_score": round(
+                    cluster_means[label],
+                    3,
+                ),
+
+                "color": expected_color,
 
             }
 
@@ -343,7 +374,12 @@ class ClusteringService:
         indicators = AnalyticsSelector.indicators()
 
         row = [
-            float(variable_scores.get(indicator.variable.code, 0))
+            float(
+                variable_scores.get(
+                    indicator.variable.code,
+                    0,
+                )
+            )
             for indicator in indicators
         ]
 
@@ -369,4 +405,3 @@ class ClusteringService:
             "feature_vector": row,
 
         }
-
