@@ -195,6 +195,10 @@ class MLDashboardService:
 
                 "cluster": village.cluster,
 
+                "cluster_color": MLDashboardService.get_cluster_color(
+                    village.cluster
+                ),
+
                 "total_score": (
                     score.total_score
                     if score

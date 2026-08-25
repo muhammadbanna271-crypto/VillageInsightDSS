@@ -2,6 +2,9 @@ from apps.recommendation.selectors.recommendation_selector import (
     RecommendationSelector,
 )
 from apps.recommendation.services.topsis import TOPSIS
+from apps.analytics.services.ml_dashboard_service import (
+    MLDashboardService,
+)
 
 
 class ClusterRecommendationService:
@@ -107,9 +110,17 @@ class ClusterRecommendationService:
 
                 ]
 
+            cluster = bucket["cluster"]
+
             result.append({
 
-                "cluster": bucket["cluster"],
+                "cluster": cluster,
+
+                # Gunakan helper warna yang sama dengan
+                # Pie Chart dan Scatter Plot pada ML Dashboard.
+                "cluster_color": MLDashboardService.get_cluster_color(
+                    cluster
+                ),
 
                 "ranking": ranking,
 
