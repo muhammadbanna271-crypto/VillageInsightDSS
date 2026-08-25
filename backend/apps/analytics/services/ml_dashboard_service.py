@@ -6,16 +6,55 @@ from apps.respondent.models import Respondent
 from apps.response.models import Response
 
 
-CLUSTER_COLORS = [
-    "#0d6efd",
-    "#198754",
-    "#dc3545",
-    "#fd7e14",
-    "#6f42c1",
-]
+# =========================================================
+# WARNA CLUSTER
+# Warna ditentukan berdasarkan level cluster, bukan urutan ID.
+# =========================================================
+
+CLUSTER_COLORS = {
+    "Unggul": "#198754",        # Hijau
+    "Sedang": "#fd7e14",        # Oranye
+    "Berkembang": "#0d6efd",    # Biru
+    "Rendah": "#dc3545",        # Merah
+    "Sangat Rendah": "#6f42c1", # Ungu
+}
 
 
 class MLDashboardService:
+
+    # =========================================================
+    # HELPER WARNA CLUSTER
+    # =========================================================
+
+    @staticmethod
+    def get_cluster_color(cluster):
+        """
+        Menentukan warna cluster berdasarkan nama level cluster.
+
+        Contoh:
+        Unggul (Auto K-Means)    -> hijau
+        Sedang (Auto K-Means)    -> oranye
+        Berkembang (Auto K-Means)-> biru
+
+        Jika nama cluster tidak dikenali, gunakan warna
+        yang tersimpan di database. Jika tetap tidak ada,
+        gunakan abu-abu.
+        """
+
+        if cluster is None:
+            return "#6c757d"
+
+        cluster_name = cluster.name or ""
+
+        for level_name, color in CLUSTER_COLORS.items():
+
+            if level_name.lower() in cluster_name.lower():
+                return color
+
+        if cluster.color:
+            return cluster.color
+
+        return "#6c757d"
 
     # =========================================================
     # RINGKASAN ATAS
@@ -65,7 +104,7 @@ class MLDashboardService:
 
         result = []
 
-        for index, cluster in enumerate(clusters):
+        for cluster in clusters:
 
             result.append({
 
@@ -73,9 +112,8 @@ class MLDashboardService:
 
                 "count": cluster.villages.count(),
 
-                "color": (
-                    cluster.color
-                    or CLUSTER_COLORS[index % len(CLUSTER_COLORS)]
+                "color": MLDashboardService.get_cluster_color(
+                    cluster
                 ),
 
             })
@@ -114,12 +152,14 @@ class MLDashboardService:
 
                 "y": round(float(y), 3),
 
-                "cluster": cluster.name if cluster else "Belum Dikluster",
+                "cluster": (
+                    cluster.name
+                    if cluster
+                    else "Belum Dikluster"
+                ),
 
-                "color": (
-                    cluster.color
-                    if cluster and cluster.color
-                    else "#6c757d"
+                "color": MLDashboardService.get_cluster_color(
+                    cluster
                 ),
 
             })
@@ -143,7 +183,11 @@ class MLDashboardService:
 
         for village in villages:
 
-            score = getattr(village, "village_score", None)
+            score = getattr(
+                village,
+                "village_score",
+                None,
+            )
 
             result.append({
 
@@ -151,9 +195,17 @@ class MLDashboardService:
 
                 "cluster": village.cluster,
 
-                "total_score": score.total_score if score else 0,
+                "total_score": (
+                    score.total_score
+                    if score
+                    else 0
+                ),
 
-                "rank": score.rank if score else "-",
+                "rank": (
+                    score.rank
+                    if score
+                    else "-"
+                ),
 
             })
 

@@ -312,89 +312,217 @@ const scatterData = JSON.parse(
     document.getElementById("scatter-data").textContent
 );
 
-// ================= Pie Chart =================
 
-new Chart(document.getElementById("pieChart"), {
-    type: "pie",
-    data: {
-        labels: clusterDistribution.map(item => item.label),
-        datasets: [{
-            data: clusterDistribution.map(item => item.count),
-            backgroundColor: clusterDistribution.map(item => item.color),
-            borderColor: "#ffffff",
-            borderWidth: 2,
-        }],
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: "top",
-            },
-        },
-    },
-});
-
-
-// ================= Feature Importance Bar Chart =================
-
-new Chart(document.getElementById("importanceChart"), {
-    type: "bar",
-    data: {
-        labels: variableImportance.map(item => item.name),
-        datasets: [{
-            label: "Kontribusi (%)",
-            data: variableImportance.map(item => item.percentage),
-            backgroundColor: "#198754",
-            borderColor: "#146c43",
-            borderWidth: 1,
-        }],
-    },
-    options: {
-        indexAxis: "y",
-        responsive: true,
-        plugins: {
-            legend: {
-                display: false,
-            },
-        },
-        scales: {
-            x: {
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    text: "Kontribusi (%)",
-                },
-            },
-        },
-    },
-});
-
-// ================= Scatter Plot (PCA) =================
-
-const scatterByCluster = {};
+// =========================================================
+// WARNA CLUSTER
+// =========================================================
 
 const clusterColors = {
     "Berkembang": "#0d6efd",
     "Sedang": "#fd7e14",
     "Unggul": "#198754",
 
-    // fallback jika nama cluster masih default
     "Cluster 0": "#0d6efd",
     "Cluster 1": "#fd7e14",
     "Cluster 2": "#198754",
 
+    "Rendah": "#dc3545",
+    "Sangat Rendah": "#6f42c1",
+
     "Belum Dikluster": "#6c757d",
 };
+
+
+// =========================================================
+// HELPER WARNA CLUSTER
+// =========================================================
+
+function getClusterColor(clusterName, backendColor = null) {
+
+    if (!clusterName) {
+        return backendColor || "#6c757d";
+    }
+
+    const normalizedName = clusterName.toLowerCase();
+
+    // Prioritaskan level cluster berdasarkan nama.
+    // Ini tetap bekerja jika nama berupa:
+    // "Unggul (Auto K-Means)"
+    // "Sedang (Auto K-Means)"
+    // "Berkembang (Auto K-Means)"
+
+    if (normalizedName.includes("unggul")) {
+        return clusterColors["Unggul"];
+    }
+
+    if (normalizedName.includes("sedang")) {
+        return clusterColors["Sedang"];
+    }
+
+    if (normalizedName.includes("berkembang")) {
+        return clusterColors["Berkembang"];
+    }
+
+    if (normalizedName.includes("rendah")) {
+
+        if (normalizedName.includes("sangat rendah")) {
+            return clusterColors["Sangat Rendah"];
+        }
+
+        return clusterColors["Rendah"];
+    }
+
+    // Untuk nama cluster yang benar-benar exact match.
+    if (clusterColors[clusterName]) {
+        return clusterColors[clusterName];
+    }
+
+    // Fallback ke warna dari backend.
+    if (backendColor) {
+        return backendColor;
+    }
+
+    return "#6c757d";
+}
+
+
+// =========================================================
+// Pie Chart -- Distribusi Cluster
+// =========================================================
+
+new Chart(document.getElementById("pieChart"), {
+
+    type: "pie",
+
+    data: {
+
+        labels: clusterDistribution.map(
+            item => item.label
+        ),
+
+        datasets: [{
+
+            data: clusterDistribution.map(
+                item => item.count
+            ),
+
+            // Warna ditentukan berdasarkan nama cluster,
+            // bukan hanya dari database.
+            backgroundColor: clusterDistribution.map(
+                item => getClusterColor(
+                    item.label,
+                    item.color
+                )
+            ),
+
+            borderColor: "#ffffff",
+
+            borderWidth: 2,
+
+        }],
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+                position: "top",
+            },
+
+        },
+
+    },
+
+});
+
+
+// =========================================================
+// Feature Importance Bar Chart
+// =========================================================
+
+new Chart(document.getElementById("importanceChart"), {
+
+    type: "bar",
+
+    data: {
+
+        labels: variableImportance.map(
+            item => item.name
+        ),
+
+        datasets: [{
+
+            label: "Kontribusi (%)",
+
+            data: variableImportance.map(
+                item => item.percentage
+            ),
+
+            backgroundColor: "#198754",
+
+            borderColor: "#146c43",
+
+            borderWidth: 1,
+
+        }],
+
+    },
+
+    options: {
+
+        indexAxis: "y",
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+                display: false,
+            },
+
+        },
+
+        scales: {
+
+            x: {
+
+                beginAtZero: true,
+
+                title: {
+
+                    display: true,
+
+                    text: "Kontribusi (%)",
+
+                },
+
+            },
+
+        },
+
+    },
+
+});
+
+
+// =========================================================
+// Scatter Plot (PCA)
+// =========================================================
+
+const scatterByCluster = {};
 
 scatterData.forEach((point) => {
 
     if (!scatterByCluster[point.cluster]) {
 
-        const color =
-            point.color ||
-            clusterColors[point.cluster] ||
-            "#6c757d";
+        const color = getClusterColor(
+            point.cluster,
+            point.color
+        );
 
         scatterByCluster[point.cluster] = {
 
@@ -428,10 +556,15 @@ scatterData.forEach((point) => {
 new Chart(
     document.getElementById("scatterChart"),
     {
+
         type: "scatter",
 
         data: {
-            datasets: Object.values(scatterByCluster),
+
+            datasets: Object.values(
+                scatterByCluster
+            ),
+
         },
 
         options: {
@@ -441,8 +574,11 @@ new Chart(
             plugins: {
 
                 legend: {
+
                     position: "top",
+
                     display: true,
+
                 },
 
                 tooltip: {
@@ -498,14 +634,19 @@ new Chart(
     }
 );
 
-// ================= Radar Chart =================
+
+// =========================================================
+// Radar Chart
+// =========================================================
 
 let radarChartInstance = null;
 
 function loadRadarChart(villageId) {
 
     fetch(`/analytics/ml/radar/${villageId}/`)
+
         .then(response => response.json())
+
         .then(data => {
 
             if (radarChartInstance) {
@@ -515,24 +656,44 @@ function loadRadarChart(villageId) {
             radarChartInstance = new Chart(
                 document.getElementById("radarChart"),
                 {
+
                     type: "radar",
+
                     data: {
+
                         labels: data.labels,
+
                         datasets: [{
+
                             label: data.village,
+
                             data: data.values,
-                            backgroundColor: "rgba(25, 135, 84, 0.20)",
+
+                            backgroundColor:
+                                "rgba(25, 135, 84, 0.20)",
+
                             borderColor: "#198754",
+
                         }],
+
                     },
+
                     options: {
+
                         scales: {
+
                             r: {
+
                                 min: 0,
+
                                 max: 5,
+
                             },
+
                         },
+
                     },
+
                 }
             );
 
@@ -540,69 +701,102 @@ function loadRadarChart(villageId) {
 
 }
 
-const radarSelect = document.getElementById("radar-village-select");
+const radarSelect = document.getElementById(
+    "radar-village-select"
+);
 
 if (radarSelect && radarSelect.value) {
     loadRadarChart(radarSelect.value);
 }
 
-radarSelect.addEventListener("change", (event) => {
-    loadRadarChart(event.target.value);
-});
+radarSelect.addEventListener(
+    "change",
+    (event) => {
+        loadRadarChart(event.target.value);
+    }
+);
 
-// ================= Form Predict -> set action dinamis =================
 
-const predictForm = document.getElementById("predict-form");
+// =========================================================
+// Form Predict -> set action dinamis
+// =========================================================
 
-const predictVillageSelect = document.getElementById("predict-village");
+const predictForm = document.getElementById(
+    "predict-form"
+);
+
+const predictVillageSelect = document.getElementById(
+    "predict-village"
+);
 
 function setPredictFormAction() {
-    predictForm.action = `/analytics/ml/predict/${predictVillageSelect.value}/`;
+
+    predictForm.action =
+        `/analytics/ml/predict/${predictVillageSelect.value}/`;
+
 }
 
-predictVillageSelect.addEventListener("change", setPredictFormAction);
+predictVillageSelect.addEventListener(
+    "change",
+    setPredictFormAction
+);
 
 setPredictFormAction();
 
-// ================= UX: konfirmasi & loading state =================
 
-const retrainForm = document.getElementById("retrain-form");
+// =========================================================
+// UX: konfirmasi & loading state
+// =========================================================
 
-const retrainBtn = document.getElementById("retrain-btn");
+const retrainForm = document.getElementById(
+    "retrain-form"
+);
 
-retrainForm.addEventListener("submit", (event) => {
+const retrainBtn = document.getElementById(
+    "retrain-btn"
+);
 
-    const confirmed = confirm(
-        "Retrain model akan menghitung ulang seluruh clustering " +
-        "dan feature importance berdasarkan data survey terbaru. " +
-        "Lanjutkan?"
-    );
+retrainForm.addEventListener(
+    "submit",
+    (event) => {
 
-    if (!confirmed) {
+        const confirmed = confirm(
+            "Retrain model akan menghitung ulang seluruh clustering " +
+            "dan feature importance berdasarkan data survey terbaru. " +
+            "Lanjutkan?"
+        );
 
-        event.preventDefault();
+        if (!confirmed) {
 
-        return;
+            event.preventDefault();
+
+            return;
+
+        }
+
+        retrainBtn.disabled = true;
+
+        retrainBtn.innerHTML = (
+            '<span class="spinner-border spinner-border-sm me-1"></span> Memproses...'
+        );
 
     }
+);
 
-    retrainBtn.disabled = true;
+const predictBtn = document.getElementById(
+    "predict-btn"
+);
 
-    retrainBtn.innerHTML = (
-        '<span class="spinner-border spinner-border-sm me-1"></span> Memproses...'
-    );
+predictForm.addEventListener(
+    "submit",
+    () => {
 
-});
+        predictBtn.disabled = true;
 
-const predictBtn = document.getElementById("predict-btn");
+        predictBtn.innerText = "Memproses...";
 
-predictForm.addEventListener("submit", () => {
-
-    predictBtn.disabled = true;
-
-    predictBtn.innerText = "Memproses...";
-
-});
+    }
+);
 
 </script>
 
