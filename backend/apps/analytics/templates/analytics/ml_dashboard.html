@@ -231,7 +231,7 @@ ML Analytics Dashboard
                     <td>{{ row.village.name }}</td>
                     <td>
                         {% if row.cluster %}
-                        <span class="badge" style="background-color: {{ row.cluster.color }}">
+                        <span class="badge" style="background-color: {{ row.cluster_color|default:row.cluster.color }}">
                             {{ row.cluster.name }}
                         </span>
                         {% else %}
@@ -259,7 +259,7 @@ ML Analytics Dashboard
         {% for group in cluster_ranking %}
         <h6 class="mt-2">
             {% if group.cluster %}
-            <span class="badge" style="background-color: {{ group.cluster.color }}">
+            <span class="badge" style="background-color: {{ group.cluster_color|default:group.cluster.color }}">
                 {{ group.cluster.name }}
             </span>
             {% else %}
